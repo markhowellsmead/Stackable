@@ -1,6 +1,6 @@
 {
   "name": "stackable",
-  "version": "1.15.5",
+  "version": "1.15.6",
   "private": true,
   "description": "Blocks for everyone",
   "author": "Benjamin Intal of Gambit",
@@ -25,6 +25,7 @@
     "counterup2": "^1.0.4",
     "is-dark-color": "^1.2.0",
     "md5": "^2.2.1",
+    "objectFitPolyfill": "^2.2.0",
     "striptags": "^3.1.1",
     "waypoints": "^4.0.1"
   },

@@ -1,13 +1,25 @@
-import { __ } from '@wordpress/i18n'
-import { i18n } from 'stackable'
+/**
+ * Internal dependencies
+ */
 import SVGCircleIcon from './images/play-circle.svg'
 import SVGNormalIcon from './images/play-normal.svg'
 import SVGOutlineIcon from './images/play-outline.svg'
 
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n'
+import { applyFilters } from '@wordpress/hooks'
+
+/**
+ * External dependencies
+ */
+import { i18n } from 'stackable'
+
 const playButton = {
-	normal: style => <SVGNormalIcon style={ style } width="30" height="30" />,
-	circle: style => <SVGCircleIcon style={ style } width="50" height="50" />,
-	outline: style => <SVGOutlineIcon style={ style } width="50" height="50" />,
+	normal: <SVGNormalIcon className="ugb-play-button-normal" width="30" height="30" />,
+	circle: <SVGCircleIcon className="ugb-play-button-cirle" width="50" height="50" />,
+	outline: <SVGOutlineIcon className="ugb-play-button-outline" width="50" height="50" />,
 }
 
 export const playButtonTypes = [
@@ -16,6 +28,21 @@ export const playButtonTypes = [
 	{ value: 'outline', label: __( 'Outline Play Button', i18n ) },
 ]
 
-export const getPlayButton = ( name, fill = null ) => {
-	return playButton[ name ]( { fill } )
+export const getPlayButton = name => {
+	return playButton[ name ]
+}
+
+export const showOptions = blockProps => {
+	const {
+		showBlockBackground = false,
+		blockInnerWidth = '',
+		align = '',
+	} = blockProps.attributes
+
+	const previewIsFullWidth = ( ! showBlockBackground && align === 'full' ) || ( showBlockBackground && blockInnerWidth === 'full' )
+
+	return applyFilters( 'stackable.video-popup.show', {
+		containerWidth: ! previewIsFullWidth,
+		borderRadius: ! previewIsFullWidth,
+	}, blockProps )
 }

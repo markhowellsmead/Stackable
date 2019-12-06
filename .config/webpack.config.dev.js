@@ -1,6 +1,7 @@
 const externals = require( './externals' )
 const rules = require( './rules' )
 const path = require( 'path' )
+const ImageminPlugin = require( 'imagemin-webpack' )
 
 module.exports = [ {
 
@@ -36,7 +37,7 @@ module.exports = [ {
 
     resolve: {
         alias: {
-            '@stackable': path.resolve( __dirname, '../src/' )
+            '~stackable': path.resolve( __dirname, '../src/' )
         }
     },
 
@@ -76,7 +77,7 @@ module.exports = [ {
 
     resolve: {
         alias: {
-            '@stackable': path.resolve( __dirname, '../src/' )
+            '~stackable': path.resolve( __dirname, '../src/' )
         }
     },
 
@@ -94,6 +95,16 @@ module.exports = [ {
 	module: {
         strictExportPresence: true,
         rules,
-    }
-}
-]
+	},
+	plugins: [
+		new ImageminPlugin( {
+			bail: false,
+			cache: true,
+			imageminOptions: {
+				plugins: [
+					[ "pngquant", { quality: [ 0.5, 0.5 ] } ],
+				]
+			}
+		} )
+	],
+} ]

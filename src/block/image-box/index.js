@@ -2,66 +2,132 @@
  * BLOCK: Image Box Block.
  */
 
-import { disabledBlocks, i18n } from 'stackable'
+/**
+ * Internal dependencies
+ */
+import './design'
+import deprecated from './deprecated'
+import edit from './edit'
+import save from './save'
+
+/**
+ * External dependencies
+ */
+import { ImageBoxIcon } from '~stackable/icons'
+import {
+	createBackgroundAttributes,
+	createTypographyAttributes,
+	createResponsiveAttributes,
+	createAllCombinationAttributes,
+	createImageAttributes,
+	createImageBackgroundAttributes,
+} from '~stackable/util'
+
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n'
-import { ImageBoxIcon } from '@stackable/icons'
+import { addFilter, applyFilters } from '@wordpress/hooks'
+import { disabledBlocks, i18n } from 'stackable'
 
 export const schema = {
-	align: {
+	design: {
 		type: 'string',
+		default: 'basic',
 	},
 	columns: {
 		type: 'number',
 		default: 3,
 	},
-	titleColor: {
-		type: 'string',
-		default: '#ffffff',
-	},
-	subtitleColor: {
-		type: 'string',
-		default: '#ffffff',
-	},
-	overlayColor: {
-		type: 'string',
-	},
-	width: {
-		type: 'number',
-		default: 400,
-	},
-	height: {
-		type: 'number',
-		default: 400,
-	},
-	verticalAlign: {
-		type: 'string',
-		default: 'center',
-	},
-	horizontalAlign: {
-		type: 'string',
-		default: 'center',
-	},
-	design: {
-		type: 'string',
-		default: 'basic',
-	},
 	borderRadius: {
 		type: 'number',
-		default: 12,
+		default: '',
 	},
 	shadow: {
 		type: 'number',
-		default: 3,
-	},
-	overlayOpacity: {
-		type: 'number',
-		default: 7,
-	},
-	imageHoverEffect: {
-		type: 'string',
 		default: '',
 	},
-	arrow: {
+
+	// Link.
+	...createAllCombinationAttributes(
+		'link%sUrl', {
+			type: 'string',
+			default: '',
+			source: 'attribute',
+			selector: '.ugb-image-box__item%d .ugb-image-box__overlay-link',
+			attribute: 'href',
+		},
+		[ '1', '2', '3', '4' ]
+	),
+	...createAllCombinationAttributes(
+		'link%s%s', {
+			type: 'boolean',
+			default: '',
+		},
+		[ '1', '2', '3', '4' ],
+		[ 'NewTab', 'NoFollow' ]
+	),
+
+	// Image.
+	...createImageAttributes( 'image%s', {
+		exclude: [
+			'Url',
+			'Id',
+			'Alt',
+			'BlendMode',
+		],
+	} ),
+	...createImageBackgroundAttributes( 'image%s' ),
+	imageSize: {
+		type: 'string',
+		default: 'large',
+	},
+	...createAllCombinationAttributes(
+		'image%s%s', {
+			type: 'number',
+			default: '',
+		},
+		[ '1', '2', '3', '4' ],
+		[ 'Id', 'FullWidth', 'FullHeight' ]
+	),
+	...createAllCombinationAttributes(
+		'image%s%s', {
+			type: 'string',
+			default: '',
+		},
+		[ '1', '2', '3', '4' ],
+		[ 'Url', 'FullUrl' ]
+	),
+
+	// Overlay.
+	showOverlay: {
+		type: 'boolean',
+		default: false,
+	},
+	...createBackgroundAttributes( 'overlay%s' ),
+	overlayOpacity: {
+		type: 'number',
+		default: 0.7,
+	},
+
+	// Overlay Hover.
+	showOverlayHover: {
+		type: 'boolean',
+		default: true,
+	},
+	...createBackgroundAttributes( 'overlayHover%s' ),
+	overlayHoverOpacity: {
+		type: 'number',
+		default: 0.7,
+	},
+
+	...createResponsiveAttributes( 'imageBackground%sHeight', {
+		type: 'number',
+		default: '',
+	} ),
+
+	// Effects.
+	imageHoverEffect: {
 		type: 'string',
 		default: '',
 	},
@@ -70,74 +136,122 @@ export const schema = {
 		default: '',
 	},
 
-	// Keep the old attributes. Gutenberg issue https://github.com/WordPress/gutenberg/issues/10406
-	full: {
-		type: 'boolean',
-	},
-	title: {
+	// Line.
+	lineColor: {
 		type: 'string',
+		default: '',
 	},
-	subtitle: {
-		type: 'string',
-	},
-	id: {
+	lineSize: {
 		type: 'number',
+		default: '',
 	},
-	url: {
+	...createResponsiveAttributes( 'Line%sAlign', {
 		type: 'string',
+		default: '',
+	} ),
+
+	// Subtitle.
+	...createAllCombinationAttributes(
+		'subtitle%s', {
+			type: 'string',
+			source: 'html',
+			selector: '.ugb-image-box__item%d .ugb-image-box__subtitle',
+			default: __( 'Subtitle', i18n ),
+		},
+		[ '1', '2', '3', '4' ]
+	),
+	showSubtitle: {
+		type: 'boolean',
+		default: true,
 	},
-	href: {
+	...createTypographyAttributes( 'subtitle%s' ),
+	subtitleColor: {
 		type: 'string',
+		defualt: '',
 	},
 
-	// Custom CSS attributes.
-	customCSSUniqueID: {
-		type: 'string',
-		default: '',
-	},
-	customCSS: {
-		type: 'string',
-		default: '',
-	},
-	customCSSCompiled: {
-		type: 'string',
-		default: '',
-	},
-}
-
-// Wrap in curly or else statement will merge with the previous one and will error out.
-{ [ 1, 2, 3, 4 ].forEach( i => {
-	schema[ `title${ i }` ] = {
-		source: 'html',
-		selector: `.ugb-image-box__item:nth-of-type(${ i }) .ugb-image-box__title`,
-		default: __( 'Title', i18n ),
-	}
-	schema[ `description${ i }` ] = {
-		source: 'html',
-		selector: `.ugb-image-box__item:nth-of-type(${ i }) .ugb-image-box__description`,
-		default: __( 'Description', i18n ),
-	}
-	schema[ `imageURL${ i }` ] = {
-		type: 'string',
-	}
-	schema[ `imageID${ i }` ] = {
-		type: 'number',
-	}
-	schema[ `link${ i }` ] = {
-		type: 'string',
-		source: 'attribute',
-		selector: `.ugb-image-box__item:nth-of-type(${ i }) .ugb-image-box__overlay`,
-		attribute: 'href',
-		default: '',
-	}
-	schema[ `newTab${ i }` ] = {
+	// Title.
+	...createAllCombinationAttributes(
+		'title%s', {
+			type: 'string',
+			source: 'html',
+			selector: '.ugb-image-box__item%d .ugb-image-box__title',
+			default: __( 'Title', i18n ),
+		},
+		[ '1', '2', '3', '4' ]
+	),
+	showTitle: {
 		type: 'boolean',
-		source: 'attribute',
-		selector: `.ugb-image-box__item:nth-of-type(${ i }) .ugb-image-box__overlay`,
-		attribute: 'target',
+		default: true,
+	},
+	titleTag: {
+		type: 'string',
+		defualt: '',
+	},
+	...createTypographyAttributes( 'title%s' ),
+	titleColor: {
+		type: 'string',
+		default: '',
+	},
+
+	// Description.
+	...createAllCombinationAttributes(
+		'description%s', {
+			type: 'string',
+			source: 'html',
+			selector: '.ugb-image-box__item%d .ugb-image-box__description',
+			default: __( 'Description', i18n ),
+		},
+		[ '1', '2', '3', '4' ]
+	),
+	showDescription: {
+		type: 'boolean',
+		default: true,
+	},
+	...createTypographyAttributes( 'description%s' ),
+	descriptionColor: {
+		type: 'string',
+		default: '',
+	},
+
+	// Arrow.
+	showArrow: {
+		type: 'boolean',
 		default: false,
-	}
-} ) }
+	},
+	arrowColor: {
+		type: 'string',
+		default: '',
+	},
+	...createResponsiveAttributes( 'Arrow%sSize', {
+		type: 'number',
+		default: '',
+	} ),
+	...createResponsiveAttributes( 'Arrow%sAlign', {
+		type: 'string',
+		default: '',
+	} ),
+
+	// Alignments.
+	...createAllCombinationAttributes(
+		'%s%sAlign', {
+			type: 'string',
+			default: '',
+		},
+		[ 'Subtitle', 'Title', 'Description', 'Arrow' ],
+		[ '', 'Tablet', 'Mobile' ]
+	),
+
+	// Spacing.
+	...createAllCombinationAttributes(
+		'%s%sBottomMargin', {
+			type: 'number',
+			default: '',
+		},
+		[ 'Subtitle', 'Title', 'Line', 'Description', 'Arrow' ],
+		[ '', 'Tablet', 'Mobile' ]
+	),
+}
 
 export const name = 'ugb/image-box'
 
@@ -155,4 +269,40 @@ export const settings = {
 		inserter: ! disabledBlocks.includes( name ), // Hide if disabled.
 	},
 	attributes: schema,
+
+	deprecated,
+	edit,
+	save,
+
+	// Stackable modules.
+	modules: {
+		'advanced-general': true,
+		'advanced-block-spacing': true,
+		'advanced-column-spacing': true,
+		'advanced-responsive': true,
+		'block-background': true,
+		'block-separators': true,
+		'block-title': true,
+		'content-align': true,
+		'block-designs': true,
+		'custom-css': {
+			default: applyFilters( 'stackable.image-box.custom-css.default', '' ),
+		},
+	},
 }
+
+// The "height" option is really the "columnHeight" option. @see edit.js
+// Disable the default column height.
+addFilter( 'stackable.image-box.advanced-column-spacing.styles', 'stackable/image-box/column-height', styles => {
+	styles[ '> .ugb-inner-block > .ugb-block-content > *' ] = {
+		minHeight: undefined,
+	}
+	styles.tablet[ '> .ugb-inner-block > .ugb-block-content > *' ] = {
+		minHeight: undefined,
+	}
+	styles.mobile[ '> .ugb-inner-block > .ugb-block-content > *' ] = {
+		minHeight: undefined,
+	}
+
+	return styles
+} )

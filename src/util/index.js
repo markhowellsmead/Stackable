@@ -1,6 +1,25 @@
+export * from './font'
+export * from './attributes'
+export * from './typography'
+export * from './background'
+export * from './image'
+export * from './image-background'
+export * from './button'
 export * from './styles'
+export * from './social'
+export * from './blocks'
+export * from './svg'
+
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n'
+
+/**
+ * External dependencies
+ */
 import { i18n } from 'stackable'
+import rgba from 'color-rgba'
 
 /**
  * Returns an array range of numbers.
@@ -15,6 +34,15 @@ import { i18n } from 'stackable'
 export const range = ( start, end ) => {
 	return Array.from( { length: ( end - start ) }, ( v, k ) => k + start )
 }
+
+/**
+ * Check whether a URL is a video file.
+ *
+ * @param {string} url
+ *
+ * @return {boolean} True if a video.
+ */
+export const urlIsVideo = url => url.match( /(mp4|webm|ogg)/i )
 
 /**
  * From a URL, get the video ID and provider: YouTube or Vimeo.
@@ -67,6 +95,7 @@ export const getVideoProviderFromURL = url => {
 
 /**
  * Generates a placeholder text for short to long descriptions.
+ * Deprecations are dependent on this, this shouldn't change.
  *
  * @param {string} length The length of the placeholder. Values are: short, medium, long, normal. Defaults to normal.
  *
@@ -84,28 +113,30 @@ export const descriptionPlaceholder = length => {
 }
 
 /**
+ *
+ * Combines hex & opacity to rgba.
+ *
+ * @param {string} hexColor Color
+ * @param {number} opacity Opacity
+ *
+ * @return {string} Rgba color.
+ */
+export const hexToRgba = ( hexColor, opacity = null ) => {
+	let hex = hexColor.replace( /#/, '' )
+	if ( hex.length <= 4 ) {
+		hex = hex.replace( /#?(.)(.)(.)/, '$1$1$2$2$3$3' )
+	}
+	const newColor = rgba( `#${ hex }ff` )
+	newColor[ 3 ] = opacity !== null ? opacity : 1
+	return `rgba(${ newColor.join( ', ' ) })`
+}
+
+/**
  * Are we inside the Gutenberg Block Editor?
  *
  * @return {boolean} True if inside the Gutenberg Block Editor, false if not (e.g. in the frontend).
  */
 export const isEditor = () => typeof window.wp !== 'undefined' && typeof window.wp.editor !== 'undefined'
-
-/**
- * Makes a unique ID based on the block's clientID.
- *
- * @param {string} clientID The block's clientID
- *
- * @return {string} A unique ID
- */
-export const getUniqueID = clientID => {
-	// Create a unique ID based on the block's clientId.
-	const last7 = ( 'ugb-' + clientID.substring( clientID.length - 7 ) )
-	const first7 = ( 'ugb-' + clientID.substring( 0, 7 ) )
-
-	// Make sure we have a unique one.
-	const lastExists = document.querySelectorAll( `.${ last7 }` ).length > 1
-	return lastExists ? first7 : last7
-}
 
 /**
  * Simple CSS minification.
@@ -137,6 +168,73 @@ export const minifyCSS = ( css, important = false ) => {
 		.replace( /([;\}])/g, ' !important$1' ) // Add our own !important.
 		.replace( /\} !important\}/g, '}}' ) // Ending of media queries "}}" get an added !important from the previous line, remove it.
 		.trim()
+}
+
+/**
+ * "Compiles" CSS - compiles the CSS for use of a specific block only.
+ *
+ * @param {string} css
+ * @param {string} mainClass
+ * @param {string} uniqueID
+ *
+ * @return {string} CSS
+ */
+export const compileCSS = ( css, mainClass, uniqueID ) => {
+	// Regex steps:
+	// Add the unique ID:
+	// 		".ugb-accordion" -> ".uniqueID .ugb-accordion"
+	// 		".ugb-accordion__title" -> ".uniqueID .ugb-accordion__title"
+	// Connect the unique ID and the main class:
+	// 		".ugb-accordion" -> ".uniqueID.ugb-accordion"
+	// 		".ugb-accordion__title" -> ".uniqueID .ugb-accordion__title"
+	return ( css || '' ).replace( /\/\*[\s\S]*?\*\//g, '' )
+		.replace( /\/\/(.*)?\n/g, '' )
+		.replace( /([^}]+)({)/g, ( match, selector, paren ) => {
+			// Ignore media queries (re-add them after fixing the classes)
+			if ( selector.match( /@\w+/g ) ) {
+				return selector.replace( /(@\w+[^{]+{\s*)([^{]+)/g, ( match, mediaQuery, selector ) => {
+					const newSelector = prependCSSClass( selector, mainClass, uniqueID )
+					return `${ mediaQuery } ${ newSelector } ${ paren }`
+				} )
+			}
+
+			const newSelector = prependCSSClass( selector, mainClass, uniqueID )
+			return `${ newSelector } ${ paren }`
+		} ).trim()
+}
+
+/**
+ * Ensures the cssSelector is only applied to the uniqueClassName element.
+ * Wraps the cssSelector with a uniqueClassName, and takes into account the mainClassName.
+ *
+ * For example:
+ * .title-block -> .my-title-be8d9a.title-block
+ * .title-block span -> .my-title-be8d9a.title-block span
+ * span -> .my-title-be8d9a span
+ *
+ * @param {string} cssSelector The CSS selector.
+ * @param {string} mainClassName The main class of the block to target.
+ * @param {string} uniqueClassName The unique parent classname to wrap the selector.
+ * @param {string} wrapSelector All selectors will be wrapped in this if provided.
+ *
+ * @return {string} The modified CSS selector.
+ */
+export const prependCSSClass = ( cssSelector, mainClassName = '', uniqueClassName = '', wrapSelector = '' ) => {
+	return cssSelector.trim().replace( /[\n\s\t]+/g, ' ' )
+		.split( ',' )
+		.map( s => {
+			let newSelector = ''
+			if ( ! uniqueClassName || ! mainClassName ) {
+				newSelector = s
+			} else if ( uniqueClassName && ! mainClassName ) {
+				newSelector = `.${ uniqueClassName } ${ s.trim() }`
+			} else {
+				newSelector = `.${ uniqueClassName } ${ s.trim() }`
+					.replace( new RegExp( `(.${ uniqueClassName }) (.${ mainClassName }(#|:|\\[|\\.|\\s|$))`, 'g' ), '$1$2' )
+			}
+			return wrapSelector ? `${ wrapSelector } ${ newSelector }` : newSelector
+		} )
+		.join( ', ' )
 }
 
 /**

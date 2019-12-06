@@ -5,6 +5,19 @@
  */
 @import "common";
 
+.ugb-separator .ugb-block-content .ugb-separator__svg-wrapper {
+	height: 200px;
+}
+@media (max-width: 1024px) {
+	.ugb-separator .ugb-block-content .ugb-separator__svg-wrapper {
+		height: 175px;
+	}
+}
+@media (max-width: 767px) {
+	.ugb-separator .ugb-block-content .ugb-separator__svg-wrapper {
+		height: 75px;
+	}
+}
 .ugb-separator {
 	box-sizing: content-box;
 	position: relative;
@@ -29,6 +42,7 @@
 		align-items: flex-end;
 		overflow-x: hidden;
 		overflow-y: visible;
+		box-sizing: content-box;
 	}
 	&.alignfull {
 		overflow: visible;
@@ -70,9 +84,5 @@
 		background: #abb8c3;
 	}
 
-	@media screen and (max-width: $break-large) {
-		.ugb-separator__svg-inner {
-			max-height: 20vw;
-		}
-	}
+
 }

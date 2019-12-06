@@ -1,11 +1,45 @@
+/**
+ * Internal dependencies
+ */
 import './polyfill'
+import withMemory from './with-memory'
+import withSticky from './with-sticky'
+
+/**
+ * WordPress dependencies
+ */
 import { Component, createRef } from '@wordpress/element'
 import { __ } from '@wordpress/i18n'
+
+/**
+ * External dependencies
+ */
 import classnames from 'classnames'
 import { i18n } from 'stackable'
 import { Icon } from '@wordpress/components'
 
-const closeAllOpenPanels = clickedEl => {
+const TABS = [
+	{
+		value: 'layout',
+		title: __( 'Layout', i18n ),
+		label: __( 'Layout Tab', i18n ),
+		icon: 'admin-settings',
+	},
+	{
+		value: 'style',
+		title: __( 'Style', i18n ),
+		label: __( 'Style Tab', i18n ),
+		icon: 'admin-appearance',
+	},
+	{
+		value: 'advanced',
+		title: __( 'Advanced', i18n ),
+		label: __( 'Advanced Tab', i18n ),
+		icon: 'admin-tools',
+	},
+]
+
+export const closeAllOpenPanels = clickedEl => {
 	[].forEach.call( document.querySelectorAll( '.components-panel__body .components-panel__body-toggle' ), el => {
 		if ( el.offsetHeight === 0 ) {
 			return
@@ -18,33 +52,20 @@ const closeAllOpenPanels = clickedEl => {
 	} )
 }
 
-const onButtonPanelClick = ev => {
-	if ( ev.target.classList.contains( 'components-panel__body-toggle' ) ) {
-		closeAllOpenPanels( ev.target )
-	} else {
-		const toggle = ev.target.closest( '.components-panel__body-toggle' )
-		if ( toggle ) {
-			closeAllOpenPanels( toggle )
-		}
-	}
-}
-
 class PanelTabs extends Component {
 	constructor() {
 		super( ...arguments )
-		this.state = {
-			activeTab: this.props.activeTab ? this.props.activeTab : 'layout',
-		}
-		this.containerDiv = createRef()
-	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.activeTab && ! prevProps.activeTab ) {
-			this.setState( { activeTab: this.props.activeTab } )
-			this.updateSidebarPanelTab( this.props.activeTab )
-		} else {
-			this.updateSidebarPanelTab( this.state.activeTab )
+		this.tabsToUse = this.props.tabs || [ 'layout', 'style', 'advanced' ]
+
+		this.state = {
+			activeTab: this.props.initialTab ? this.props.initialTab : this.tabsToUse[ 0 ],
 		}
+
+		this.onButtonPanelClick = this.onButtonPanelClick.bind( this )
+		this.updateSidebarPanelTab = this.updateSidebarPanelTab.bind( this )
+		this.select = this.select.bind( this )
+		this.containerDiv = createRef()
 	}
 
 	updateSidebarPanelTab( tab ) {
@@ -58,7 +79,7 @@ class PanelTabs extends Component {
 
 		// Listen to panel closes
 		if ( this.props.closeOtherPanels ) {
-			document.body.addEventListener( 'click', onButtonPanelClick )
+			document.body.addEventListener( 'click', this.onButtonPanelClick )
 		}
 	}
 
@@ -69,67 +90,82 @@ class PanelTabs extends Component {
 
 		// Remove listener to panel closes
 		if ( this.props.closeOtherPanels ) {
-			document.body.removeEventListener( 'click', onButtonPanelClick )
+			document.body.removeEventListener( 'click', this.onButtonPanelClick )
 		}
+	}
+
+	onButtonPanelClick( ev ) {
+		const toggle = ev.target.closest( '.components-panel__body-toggle' )
+		if ( ! toggle ) {
+			return
+		}
+
+		// Don't auto-close panels in the layout tab.
+		if ( this.state.activeTab === 'layout' ) {
+			return
+		}
+
+		closeAllOpenPanels( toggle )
+		this.props.onClickPanel( toggle.closest( '.components-panel__body' ) )
 	}
 
 	select( tab ) {
 		this.setState( { activeTab: tab } )
 		this.updateSidebarPanelTab( tab )
+		this.props.onClick( tab )
 	}
 
 	render() {
+		const classNames = classnames( [
+			this.props.className,
+			'components-panel__body',
+			'ugb-panel-tabs',
+		] )
 		return (
 			<div
-				className="components-panel__body ugb-panel-tabs"
+				className={ classNames }
+				style={ this.props.style }
 				ref={ this.containerDiv }
 			>
-				<button
-					onClick={ () => this.select( 'layout' ) }
-					className={ classnames( [ 'edit-post-sidebar__panel-tab' ],
-						{
-							'is-active': this.state.activeTab === 'layout',
+				<div className="ugb-panel-tabs__wrapper">
+					{ TABS.map( ( {
+						value, title, label, icon,
+					}, i ) => {
+						if ( ! this.tabsToUse.includes( value ) ) {
+							return null
 						}
-					) }
-					aria-label={ __( 'Layout', i18n ) }
-					data-label={ __( 'Layout', i18n ) }
-				>
-					<Icon icon="admin-settings" />
-					{ __( 'Layout', i18n ) }
-				</button>
-				<button
-					onClick={ () => this.select( 'style' ) }
-					className={ classnames( [ 'edit-post-sidebar__panel-tab' ],
-						{
-							'is-active': this.state.activeTab === 'style',
-						}
-					) }
-					aria-label={ __( 'Style', i18n ) }
-					data-label={ __( 'Style', i18n ) }
-				>
-					<Icon icon="admin-appearance" />
-					{ __( 'Style', i18n ) }
-				</button>
-				<button
-					onClick={ () => this.select( 'advanced' ) }
-					className={ classnames( [ 'edit-post-sidebar__panel-tab' ],
-						{
-							'is-active': this.state.activeTab === 'advanced',
-						}
-					) }
-					aria-label={ __( 'Advanced', i18n ) }
-					data-label={ __( 'Advanced', i18n ) }
-				>
-					<Icon icon="admin-tools" />
-					{ __( 'Advanced', i18n ) }
-				</button>
+						return (
+							<button
+								key={ i }
+								onClick={ () => this.select( value ) }
+								className={ classnames( [ 'edit-post-sidebar__panel-tab' ],
+									{
+										'is-active': this.state.activeTab === value,
+									}
+								) }
+								aria-label={ label }
+								data-label={ label }
+							>
+								<Icon icon={ icon } />
+								{ title }
+							</button>
+						)
+					} ) }
+				</div>
 			</div>
 		)
 	}
 }
 
 PanelTabs.defaultProps = {
+	className: '',
+	style: {},
 	closeOtherPanels: true,
+	blockProps: {},
+	initialTab: '',
+	onClickPanel: () => {},
+	onClick: () => {},
+	tabs: null,
 }
 
-export default PanelTabs
+export default withSticky( withMemory( PanelTabs ) )

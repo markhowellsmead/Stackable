@@ -1,9 +1,17 @@
+/**
+ * External dependencies
+ */
 import { srcUrl } from 'stackable'
 
 function DesignPanelItem( {
-	imageFile, imageHoverFile, label,
+	imageFile,
+	imageHoverFile,
+	imageWidth = '',
+	imageHeight = '',
+	label,
 } ) {
-	const src = imageFile.match( /https?:/i ) ? imageFile :
+	const src = ! imageFile ? '' :
+	            imageFile.match( /https?:/i ) ? imageFile :
 	            srcUrl ? `${ srcUrl }/${ imageFile }` :
 	            imageFile
 
@@ -15,9 +23,11 @@ function DesignPanelItem( {
 	return (
 		<span className="ugb-design-panel-item">
 			{ srcHover &&
-				<img className="ugb-design-panel-item__hover-image" src={ srcHover } alt={ label } />
+				<img className="ugb-design-panel-item__hover-image" src={ srcHover } alt={ label } width={ imageWidth } height={ imageHeight } />
 			}
-			<img className="ugb-design-panel-item__image" src={ src } alt={ label } />
+			{ src &&
+				<img className="ugb-design-panel-item__image" src={ src } alt={ label } width={ imageWidth } height={ imageHeight } />
+			}
 			<span className="design-label">
 				{ label }
 			</span>

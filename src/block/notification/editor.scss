@@ -5,23 +5,20 @@
  */
 
 [data-type="ugb/notification"] {
-	// Fade out placeholder text.
-	[data-is-placeholder-visible="true"] + .editor-rich-text__editable {
-		opacity: 0.5;
-	}
-
-	// Only show placeholder text while selected or typing.
-	&:not(.is-selected):not(.is-typing) {
-		[data-is-placeholder-visible="true"] + .editor-rich-text__editable {
-			display: none;
-		}
-		[data-is-placeholder-visible="true"] {
-			display: none;
-		}
-	}
 
 	// Always show.
 	.ugb-notification.ugb-notification--dismissible {
+		display: flex !important;
+	}
+	.ugb-notification__item > *:last-child {
+		&,
+		[role="textbox"] {
+			margin-bottom: 0;
+		}
+	}
+
+	.ugb-svg-icon-placeholder__button {
 		display: block;
+		width: 100%;
 	}
 }

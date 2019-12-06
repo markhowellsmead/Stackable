@@ -1,81 +1,61 @@
-import { separators, shadows } from './separators'
+/**
+ * External dependencies
+ */
+import { BlockContainer, Separator } from '~stackable/components'
+import { withBlockStyles, withUniqueClass } from '~stackable/higher-order'
+
+/**
+ * Internal dependencies
+ */
+import createStyles from './style'
+
+/**
+ * WordPress dependencies
+ */
 import { applyFilters } from '@wordpress/hooks'
 import classnames from 'classnames'
+import { compose } from '@wordpress/compose'
+import { Fragment } from '@wordpress/element'
 
 const save = props => {
 	const { className } = props
 
 	const {
-		height,
 		design = 'wave-1',
-		marginTop = 0,
-		marginBottom = 0,
-		paddingTop = 0,
-		paddingBottom = 0,
-		backgroundColor = '',
 		flipVertically = false,
 		flipHorizontally = false,
-		layer1Color = '',
-		layer1Width = 1,
-		layer1Flip = false,
 		layer1Shadow = false,
 	} = props.attributes
 
 	const mainClasses = classnames( [
 		className,
-		'ugb-separator',
+		'ugb-separator--v2',
 		`ugb-separator--design-${ design }`,
 	], applyFilters( 'stackable.separator.mainclasses', {
 		'ugb-separator--flip-vertical': flipVertically,
 		'ugb-separator--flip-horizontal': flipHorizontally,
 	}, design, props ) )
 
-	const mainStyle = {
-		backgroundColor: backgroundColor ? backgroundColor : undefined,
-		marginTop: `${ marginTop - 1 }px`, // -1 to prevent white lines.
-		marginBottom: `${ marginBottom - 1 }px`, // -1 to prevent white lines.
-	}
-
-	const bottomPadStyle = {
-		height: `${ paddingBottom }px`,
-		background: layer1Color ? layer1Color : undefined,
-	}
-
-	const topPadStyle = {
-		height: `${ paddingTop }px`,
-		background: backgroundColor ? backgroundColor : undefined,
-	}
-
-	const svgWrapperStyle = {
-		height: height + 'px',
-	}
-
-	const layer1Style = {
-		fill: layer1Color ? layer1Color : undefined,
-		transform: layer1Width ? `scaleX(${ layer1Width })` : undefined,
-	}
-
-	if ( layer1Flip ) {
-		layer1Style.transform = layer1Style.transform ? `${ layer1Style.transform } scaleX(-1)` : 'scaleX(-1)'
-	}
-
-	const Separator = separators[ design ]
-	const Shadow = shadows[ design ]
-
 	return (
-		<div className={ mainClasses } style={ mainStyle } aria-hidden="true">
-			{ applyFilters( 'stackable.separator.save.output.before', null, design, props ) }
-			<div className="ugb-separator__top-pad" style={ topPadStyle }></div>
-			<div className="ugb-separator__svg-wrapper" style={ svgWrapperStyle }>
-				<div className="ugb-separator__svg-inner">
-					{ layer1Shadow && <Shadow preserveAspectRatio="none" style={ layer1Style } /> }
-					<Separator preserveAspectRatio="none" style={ layer1Style } />
-					{ applyFilters( 'stackable.separator.save.output.layers', null, design, props ) }
+		<BlockContainer.Save mainClass={ false } className={ mainClasses } aria-hidden="true" blockProps={ props } render={ () => (
+			<Fragment>
+				<div className="ugb-separator__top-pad" />
+				<div className="ugb-separator__svg-wrapper">
+					<Separator
+						design={ design }
+						shadow={ layer1Shadow }
+						className="ugb-separator__svg-inner"
+					>
+						{ applyFilters( 'stackable.separator.edit.output.layers', null, design, props ) }
+					</Separator>
 				</div>
-			</div>
-			<div className="ugb-separator__bottom-pad" style={ bottomPadStyle }></div>
-		</div>
+				<div className="ugb-separator__bottom-pad" />
+			</Fragment>
+		) } />
 	)
 }
 
-export default save
+export default compose(
+	withUniqueClass,
+	withBlockStyles( createStyles ),
+)( save )

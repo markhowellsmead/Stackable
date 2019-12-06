@@ -6,118 +6,64 @@
 
 @import "common";
 
-body:not(.wp-admin) {
-	.ugb-container[style*="--ugb-text-color"] {
-		&,
-		p,
-		h1,
-		h2,
-		h3,
-		h4,
-		h5,
-		h6,
-		* {
-			color: var(--ugb-text-color);
-		}
-	}
-}
-.ugb-container {
-	@include baseBlock();
-	@include box();
-
-	&:not(.ugb--has-background):not(.ugb-has-background) {
-		box-shadow: none;
-		border-radius: 0;
-		overflow: visible;
-	}
-	&:not(.ugb--has-background):not(.ugb-has-background):not(.alignfull) {
+.ugb-container.ugb-container--v2 {
+	&.alignfull:not(.ugb-container--design-plain):not(.ugb--has-block-background) {
 		padding-left: 0;
 		padding-right: 0;
+		> .ugb-inner-block > .ugb-block-content > .ugb-container__wrapper {
+			border-radius: 0 !important;
+		}
 	}
 
-	.ugb-container__wrapper {
+	// We need to write this the specific way so that we don't affect nested containers.
+	> .ugb-inner-block > .ugb-block-content > .ugb-container__wrapper {
+		@include box();
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+	.ugb-container__side {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+	.ugb-container__side,
+	.ugb-container__content-wrapper {
 		width: 100%;
 	}
-	.ugb-container__content-wrapper {
-		@include baseBlock();
-		margin: 0;
-	}
 
-	// Different container heights.
-	&.ugb-container--height-short,
-	&.ugb-height-short {
-		padding: $box-hori-padding;
-	}
-	&.ugb-container--height-tall,
-	&.ugb-height-tall {
-		padding-top: $box-vert-padding * 2;
-		padding-bottom: $box-vert-padding * 2;
-	}
-	&.ugb-container--height-half,
-	&.ugb-container--height-full,
-	&.ugb-height-half,
-	&.ugb-height-full {
-		min-height: 50vh;
-		display: flex;
-		justify-content: center;
-		flex-direction: column;
-	}
-	&.ugb-container--height-full,
-	&.ugb-height-full {
-		min-height: 100vh;
-	}
-
-	&.ugb-container--content-left,
-	&.ugb-content-left {
-		text-align: left;
-	}
-	&.ugb-container--content-center,
-	&.ugb-content-center {
-		text-align: center;
-	}
-	&.ugb-container--content-right,
-	&.ugb-content-right {
-		text-align: right;
-	}
-	&.alignfull {
-		border-radius: 0 !important;
+	// Adjust the edge content blocks.
+	.ugb-container__content-wrapper > *:first-child {
 		margin-top: 0;
+	}
+	.ugb-container__content-wrapper > *:last-child {
 		margin-bottom: 0;
 	}
 
-	&.ugb--content-width .ugb-container__wrapper,
-	&.ugb-content-width .ugb-container__wrapper {
-		max-width: var(--content-width);
-		margin: 0 auto;
+	&.ugb-container--width-small {
+		@media screen and (max-width: $break-small) {
+			.ugb-container__content-wrapper {
+				width: 70%;
+			}
+		}
 	}
 
-	&.ugb-container--align-horizontal-left .ugb-container__content-wrapper,
-	&.ugb-align-horizontal-left .ugb-container__content-wrapper {
-		width: 50%;
-		margin: 0 auto 0 0;
+	// Disallow nested Stackable blocks to become full-width.
+	.ugb-main-block.alignfull,
+	.ugb--has-block-background {
+		width: auto !important;
+		margin-left: 0;
 	}
-	&.ugb-container--align-horizontal-center .ugb-container__content-wrapper,
-	&.ugb-align-horizontal-center .ugb-container__content-wrapper {
-		width: 50%;
-		margin: 0 auto;
-	}
-	&.ugb-container--align-horizontal-right .ugb-container__content-wrapper,
-	&.ugb-align-horizontal-right .ugb-container__content-wrapper {
-		width: 50%;
-		margin: 0 0 0 auto;
-	}
-	@media screen and (max-width: $break-small) {
-		&.ugb-container--align-horizontal-left .ugb-container__content-wrapper,
-		&.ugb-align-horizontal-left .ugb-container__content-wrapper {
-			width: 70%;
-		}
-		&.ugb-container--align-horizontal-center .ugb-container__content-wrapper,
-		&.ugb-align-horizontal-center .ugb-container__content-wrapper {
-			width: 70%;
-		}
-		&.ugb-container--align-horizontal-right .ugb-container__content-wrapper,
-		&.ugb-align-horizontal-right .ugb-container__content-wrapper {
-			width: 70%;
-		}
+}
+
+.ugb-container.ugb-container--v2.ugb-container--design-plain {
+	> .ugb-inner-block > .ugb-block-content > .ugb-container__wrapper {
+		background: none;
+		padding-left: 0;
+		padding-right: 0;
+		box-shadow: none;
+		border-radius: 0;
+		overflow: visible;
 	}
 }

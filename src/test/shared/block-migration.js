@@ -2,9 +2,16 @@
  * Checks whether saved HTML of older versioned blocks would migrate and remain valid & editable.
  * Checks whether saved HTML of older versioned blocks with changed values, would migrate and remain valid & editable.
  * Block migration should preserve the value of the `align` & `className` attribute
+ * TODO: Remove tests that use this!
  */
+/**
+ * External dependencies
+ */
+import { createAttributeValues, getDefaultAttributes } from '~stackable/test/helpers'
 
-import { createAttributeValues, getDefaultAttributes } from '@stackable/test/helpers'
+/**
+ * WordPress dependencies
+ */
 import {
 	createBlock,
 	getBlockTypes,

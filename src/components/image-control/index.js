@@ -1,43 +1,63 @@
+/**
+ * External dependencies
+ */
+import { BaseControlMultiLabel } from '~stackable/components'
+
+/**
+ * Internal dependencies
+ */
+import SVGImageIcon from './images/image.svg'
+
+/**
+ * WordPress dependencies
+ */
 import { BaseControl, Dashicon } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import { Fragment } from '@wordpress/element'
 import { i18n } from 'stackable'
 import { MediaUpload } from '@wordpress/block-editor'
-import SVGImageIcon from './images/image.svg'
 
-function ImageControl( props ) {
-	const {
-		label,
-		imageID,
-		imageURL,
-		onChange = ( { url, id } ) => {}, // eslint-disable-line no-unused-vars
-		onRemove = () => {},
-		allowedTypes = [ 'image' ],
-		help,
-	} = props
-
-	const type = imageURL && imageURL.match( /(mp4|webm|ogg)/i ) ? 'video' : 'image'
+const ImageControl = props => {
+	const type = props.imageURL && props.imageURL.match( /(mp4|webm|ogg)/i ) ? 'video' : 'image'
+	const onRemove = () => {
+		if ( props.onRemove ) {
+			props.onRemove()
+		} else {
+			props.onChange( {
+				url: '',
+				id: '',
+				width: '',
+				height: '',
+			} )
+		}
+	}
 
 	return (
 		<div className="ugb-image-control">
-			<BaseControl label={ label } help={ help }>
+			<BaseControl help={ props.help }>
+				<BaseControlMultiLabel
+					label={ props.label }
+					screens={ props.screens }
+				/>
 				<MediaUpload
-					onSelect={ onChange }
-					allowedTypes={ allowedTypes }
-					value={ imageID }
+					onSelect={ props.onChange }
+					allowedTypes={ props.allowedTypes }
+					value={ props.imageID }
 					render={ obj => {
 						return (
 							<Fragment>
-								{ imageURL &&
+								{ props.imageURL &&
 								<div className="ugb-image-preview-wrapper">
-									<button className="ugb-image-preview-remove" onClick={ onRemove }><Dashicon icon="no" /></button>
+									<button className="ugb-image-preview-remove" onClick={ onRemove }>
+										<Dashicon icon="no" />
+									</button>
 									{ type === 'video' && (
 										<video
 											className="ugb-image-preview"
 											autoPlay
 											muted
 											loop
-											src={ imageURL }
+											src={ props.imageURL }
 											onClick={ obj.open }
 											onKeyDown={ event => {
 												if ( event.keyCode === 13 ) {
@@ -50,7 +70,7 @@ function ImageControl( props ) {
 										/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */
 										<img
 											className="ugb-image-preview"
-											src={ imageURL }
+											src={ props.imageURL }
 											onClick={ obj.open }
 											onKeyDown={ event => {
 												if ( event.keyCode === 13 ) {
@@ -62,7 +82,7 @@ function ImageControl( props ) {
 									) }
 								</div>
 								}
-								{ ! imageURL && (
+								{ ! props.imageURL && (
 									<div
 										className="ugb-placeholder"
 										onClick={ obj.open }
@@ -84,6 +104,17 @@ function ImageControl( props ) {
 			</BaseControl>
 		</div>
 	)
+}
+
+ImageControl.defaultProps = {
+	label: '',
+	imageID: '',
+	imageURL: '',
+	onChange: ( { url, id, width, height } ) => {}, // eslint-disable-line
+	onRemove: () => {},
+	allowedTypes: [ 'image' ],
+	help: '',
+	screens: [ 'desktop' ],
 }
 
 export default ImageControl

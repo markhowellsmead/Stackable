@@ -1,6 +1,21 @@
+/**
+ * Internal dependencies
+ */
 import './news'
+import blockData from './blocks'
+
+/**
+ * WordPress dependencies
+ */
 import { __, sprintf } from '@wordpress/i18n'
 import { Component, render } from '@wordpress/element'
+import { send as ajaxSend } from '@wordpress/ajax'
+import domReady from '@wordpress/dom-ready'
+import { Spinner } from '@wordpress/components'
+
+/**
+ * External dependencies
+ */
 import {
 	contactURL,
 	disabledBlocks,
@@ -11,18 +26,13 @@ import {
 	pricingURL,
 	showProNoticesOption,
 	welcomeSrcUrl,
+	loadV1Styles,
+	nonceLoadV1Styles,
 } from 'stackable'
 import {
-	Tab,
-	TabList,
-	TabPanel,
-	Tabs,
+	Tab, TabList, TabPanel, Tabs,
 } from 'react-tabs'
-import { send as ajaxSend } from '@wordpress/ajax'
-import blockData from './blocks'
 import classnames from 'classnames'
-import domReady from '@wordpress/dom-ready'
-import { Spinner } from '@wordpress/components'
 
 class BlockToggler extends Component {
 	constructor() {
@@ -54,7 +64,7 @@ class BlockToggler extends Component {
 					alert( message ) // eslint-disable-line no-alert
 				},
 				data: {
-					nonce: nonce,
+					nonce,
 					disabledBlocks: this.state.disabledBlocks,
 				},
 			} )
@@ -91,7 +101,6 @@ class BlockToggler extends Component {
 				<div className="s-settings-grid">
 					{ Object.keys( blockData ).map( ( blockName, i ) => {
 						const block = blockData[ blockName ]
-						const blockNameTrim = blockName.replace( /\w+\//, '' )
 
 						// Don't show blocks that we really hide due to deprecation.
 						if ( block.sDeprecated ) {
@@ -105,6 +114,7 @@ class BlockToggler extends Component {
 							's-is-disabled': isDisabled,
 						} )
 
+						const blockNameTrim = blockName.replace( /\w+\//, '' )
 						return (
 							<div key={ i + 1 } className={ mainClasses }>
 								<img src={ `${ welcomeSrcUrl }/images/block-${ blockNameTrim }.svg` } alt={ `${ block.title } icon` } className="s-block-icon" />
@@ -184,33 +194,88 @@ class ProNoticeToggler extends Component {
 	}
 }
 
+class BackwardCompatibilityToggler extends Component {
+	constructor() {
+		super( ...arguments )
+		this.toggle = this.toggle.bind( this )
+		this.ajaxTimeout = null
+		this.state = {
+			checked: this.props.checked,
+			isSaving: false,
+		}
+	}
+
+	componentDidUpdate( prevProps, prevState ) {
+		if ( this.state.checked === prevState.checked ) {
+			return
+		}
+
+		clearTimeout( this.ajaxTimeout )
+		this.ajaxTimeout = setTimeout( () => {
+			ajaxSend( 'stackable_update_load_v1_styles_option', {
+				success: () => {
+					this.setState( { isSaving: false } )
+				},
+				error: message => {
+					this.setState( { isSaving: false } )
+					alert( message ) // eslint-disable-line no-alert
+				},
+				data: {
+					nonce: nonceLoadV1Styles,
+					checked: this.state.checked,
+				},
+			} )
+			this.setState( { isSaving: true } )
+		}, 600 )
+	}
+
+	toggle() {
+		this.setState( { checked: ! this.state.checked } )
+	}
+
+	render() {
+		return (
+			<label className="s-input-checkbox" htmlFor="s-input-v1-backward-compat">
+				<input
+					type="checkbox"
+					id="s-input-v1-backward-compat"
+					checked={ this.state.checked }
+					onChange={ this.toggle }
+				/>
+				{ __( 'Load version 1 block stylesheet for backward compatibility', i18n ) }
+				{ this.state.isSaving && <Spinner /> }
+			</label>
+		)
+	}
+}
+
 const knowledgeBaseList = () => {
 	return (
 		<ul className="s-tabs-list">
 			<li>
-				<a href="https://wpstackable.com/documentation?utm_medium=Welcome%20Page&utm_campaign=Welcome%20Help&utm_source=Plugin" target="_blank" rel="noopener noreferrer"><strong>{ __( 'Documentation', i18n ) }</strong></a>
+				<span role="img" aria-label="book">📖</span> <a href="https://wpstackable.com/documentation?utm_medium=Welcome%20Page&utm_campaign=Welcome%20Help&utm_source=Plugin" target="_blank" rel="noopener noreferrer"><strong>{ __( 'Documentation', i18n ) }</strong></a>
 				<br />
 				<span>{ __( 'Documentation & tutorials for building your site with Stackable.', i18n ) }</span>
 			</li>
 			{ isPro &&
 				<li>
-					<a href={ contactURL }><strong>{ __( 'Contact Email Support', i18n ) }</strong></a>
+					<span role="img" aria-label="envelope">✉️</span> <a href={ contactURL }><strong>{ __( 'Contact Email Support', i18n ) }</strong></a>
 					<br />
 					<span>{ __( 'Stuck with something? Email us and we’ll help you out.', i18n ) }</span>
 				</li>
 			}
 			<li>
-				<a href="https://facebook.com/groups/wpstackable" target="_blank" rel="noopener noreferrer"><strong>{ __( 'Facebook Community Group', i18n ) }</strong></a>
+				<span role="img" aria-label="discuss">💬</span> <a href="https://facebook.com/groups/wpstackable" target="_blank" rel="noopener noreferrer"><strong>{ __( 'Facebook Community Group', i18n ) }</strong></a>
 				<br />
 				<span>{ __( 'Connect with other people using Stackable and join the discussion.', i18n ) }</span>
 			</li>
 			<li>
-				<a href="https://github.com/gambitph/Stackable/issues" target="_blank" rel="noopener noreferrer"><strong>{ __( 'GitHub', i18n ) }</strong></a>
+				<span role="img" aria-label="code">💻</span> <a href="https://github.com/gambitph/Stackable/issues" target="_blank" rel="noopener noreferrer"><strong>{ __( 'GitHub', i18n ) }</strong></a>
 				<br />
 				<span>{ __( 'Discuss technical plugin issues and contribute to the plugin code.', i18n ) }</span>
 			</li>
 			<li>
-				<a href="https://wordpress.org/support/plugin/stackable-ultimate-gutenberg-blocks/" taregt="_blank" rel="noopener noreferrer"><strong>{ __( 'WordPress Plugin Support Forum', i18n ) }</strong></a>
+				<span role="img" aria-label="support">🤝</span> <a href="https://wordpress.org/support/plugin/stackable-ultimate-gutenberg-blocks/" taregt="_blank" rel="noopener noreferrer"><strong>{ __( 'WordPress Plugin Support Forum', i18n ) }</strong></a>
 				<br />
 				<span>{ __( 'Community-powered plugin support forum', i18n ) }</span>
 			</li>
@@ -220,18 +285,53 @@ const knowledgeBaseList = () => {
 
 class HelpTabs extends Component {
 	render() {
-
 		// If already pro, no need to show the tabs.
 		if ( isPro ) {
-			return knowledgeBaseList()
+			return (
+				<div>
+					<div className="s-video-tutorial-wrapper">
+						<iframe
+							title={ __( 'Video Tutorial', i18n ) }
+							width="560"
+							height="315"
+							src="https://www.youtube.com/embed/OR6wNum6mUg"
+							frameBorder="0"
+							allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+							allowFullScreen
+						/>
+					</div>
+					<h3>{ __( 'Knowledge Base', i18n ) }</h3>
+					{ knowledgeBaseList() }
+				</div>
+			)
 		}
 
 		return (
 			<Tabs>
 				<TabList className="s-tabs">
+					<Tab>{ __( 'Video Tutorial', i18n ) }</Tab>
 					<Tab>{ __( 'Knowledge Base', i18n ) }</Tab>
 					<Tab>{ __( 'Get Support', i18n ) }</Tab>
 				</TabList>
+				<TabPanel>
+					<div className="s-video-tutorial-wrapper">
+						<iframe
+							title={ __( 'Video Tutorial', i18n ) }
+							width="560"
+							height="315"
+							src="https://www.youtube.com/embed/OR6wNum6mUg"
+							frameBorder="0"
+							allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+							allowFullScreen
+						/>
+					</div>
+					<p><strong>{ __( 'Need help?', i18n ) }</strong></p>
+					<p>{ __( 'Upgrade to Premium and our support team will be there to answer any questions you might have about the usage of Stackable.', i18n ) }</p>
+					<p className="s-link-pair">
+						<a href={ pricingURL } title={ __( 'Get Stackable Premium', i18n ) }>{ __( 'Get Stackable Premium', i18n ) + ' →' }</a>
+						<a href="https://rebrand.ly/plugin-welcome-learn-premium-support" title={ __( 'Learn More', i18n ) } target="_blank" rel="noopener noreferrer">{ __( 'Learn More', i18n ) + ' →' }</a>
+					</p>
+				</TabPanel>
 				<TabPanel>
 					{ knowledgeBaseList() }
 					<p><strong>{ __( 'Need help?', i18n ) }</strong></p>
@@ -278,6 +378,11 @@ domReady( () => {
 			document.querySelector( '.s-pro-control-wrapper' )
 		)
 	}
+
+	render(
+		<BackwardCompatibilityToggler checked={ loadV1Styles } />,
+		document.querySelector( '.s-backward-compatibility-control-wrapper' )
+	)
 
 	render( <HelpTabs />, document.querySelector( '#s-help-area' ) )
 } )

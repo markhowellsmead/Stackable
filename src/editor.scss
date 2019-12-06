@@ -1,20 +1,8 @@
 // Editor only: Smooth changes.
-$effect-transition: color 0.2s ease-in-out, opacity 0.2s ease-in-out, background-color 0.2s ease-in-out, height 0.2s ease-in-out, width 0.2s ease-in-out, transform 0.2s ease-in-out, padding 0.2s ease-in-out, margin 0.2s ease-in-out, border-radius 0.2s ease-in-out, fill 0.2s ease-in-out, top 0.2s ease-in-out, left 0.2s ease-in-out;
-.wp-admin .wp-block .ugb-has-background,
-.wp-admin .wp-block .ugb--has-background {
-	&,
-	&::before {
-		transition: $effect-transition;
-	}
-}
+$effect-transition: color 0.2s ease-in-out, opacity 0.2s ease-in-out, background-color 0.2s ease-in-out, height 0.2s ease-in-out, width 0.2s ease-in-out, transform 0.2s ease-in-out, padding 0.2s ease-in-out, border-radius 0.2s ease-in-out, fill 0.2s ease-in-out, top 0.2s ease-in-out, left 0.2s ease-in-out;
 .wp-admin .wp-block [class*="ugb-"],
 .wp-admin .wp-block [class*="ugb-"] * {
 	transition: $effect-transition;
-}
-
-// Full-widths should be on top of each other in the editor.
-[data-type^="ugb/"][data-align="full"] + [data-type^="ugb/"][data-align="full"] {
-	margin-top: -32px;
 }
 
 // Stackable gradient fill. Works in tandem with icons.js
@@ -22,9 +10,43 @@ svg.ugb-stackable-icon-gradient {
 	fill: url(#stackable-gradient) !important;
 }
 
+// Standardized block styles for the editor.
+
+// Remove all block margins, we will add our own.
+[data-type^="ugb/"] {
+	> .editor-block-list__block-edit {
+		margin-top: 0 !important; // Originally 32px
+		margin-bottom: 0 !important; // Originally 32px
+	}
+	// WP 5.3 forces margins here.
+	> .editor-block-list__block-edit > [data-block] {
+		margin-top: 0 !important; // Originally 28px
+		margin-bottom: 0 !important; // Originally 28px
+	}
+}
+[data-type^="ugb/"][data-align="full"] {
+	> .editor-block-list__block-edit > [data-block] > .ugb-main-block,
+	> .editor-block-list__block-edit > [data-block] > div > .ugb-main-block {
+		margin-top: 35px; // Implement our own block margins
+		margin-bottom: 35px; // Implement our own block margins
+		padding: 0 35px;
+		// We don't need this in the editor, but save for the future.
+		// @media screen and (max-width: $break-small) {
+		// 	padding-right: 17.5px;
+		// 	padding-left: 17.5px;
+		// }
+	}
+}
+
 // Gutenberg v5.9 adds top & bottom margins in the editor, get rid of them.
 .editor-styles-wrapper [data-type^="ugb/"] {
-	h1, h2, h3, h4, h5, h6, p {
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	p {
 		margin-top: 0;
 		margin-bottom: 0;
 	}

@@ -4,100 +4,95 @@
  * Registering a basic block with Gutenberg.
  * Simple block, renders and saves the same content without any interactivity.
  */
+/**
+ * Internal dependencies
+ */
+import './design'
+import deprecated from './deprecated'
+import edit from './edit'
+import save from './save'
 
+/**
+ * External dependencies
+ */
+import {
+	createBackgroundAttributes,
+	descriptionPlaceholder,
+	createAllCombinationAttributes,
+	createTypographyAttributes,
+	createResponsiveAttributes,
+} from '~stackable/util'
+import { BlockquoteIcon } from '~stackable/icons'
 import { disabledBlocks, i18n } from 'stackable'
+
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n'
-import { BlockquoteIcon } from '@stackable/icons'
-import { descriptionPlaceholder } from '@stackable/util'
+import { applyFilters } from '@wordpress/hooks'
 
 const schema = {
-	align: {
-		type: 'string',
-	},
-	text: {
-		source: 'html',
-		selector: 'p',
-		default: descriptionPlaceholder( 'long' ),
-	},
-	color: {
-		type: 'string',
-		default: '',
-	},
-	quoteColor: {
-		type: 'string',
-		default: '',
-	},
-	backgroundColorType: {
-		type: 'string',
-		default: '',
-	},
-	backgroundColor: {
-		type: 'string',
-	},
-	backgroundColor2: {
-		type: 'string',
-		default: '',
-	},
-	backgroundColorDirection: {
-		type: 'number',
-		default: 0,
-	},
-	backgroundType: {
-		type: 'string',
-		default: '',
-	},
-	backgroundImageID: {
-		type: 'number',
-	},
-	backgroundImageURL: {
-		type: 'string',
-	},
-	backgroundOpacity: {
-		type: 'number',
-		default: 5,
-	},
-	fixedBackground: {
-		type: 'boolean',
-		default: false,
-	},
-	contentWidth: {
-		type: 'boolean',
-		default: false,
-	},
-	quotationMark: {
-		type: 'string',
-		default: 'round-thin',
-	},
-	quotationSize: {
-		type: 'number',
-		default: 70,
-	},
 	design: {
 		type: 'string',
 		default: 'plain',
 	},
 	borderRadius: {
 		type: 'number',
-		default: 12,
+		default: '',
 	},
 	shadow: {
 		type: 'number',
-		default: 3,
+		default: '',
 	},
 
-	// Custom CSS attributes.
-	customCSSUniqueID: {
+	// Container.
+	...createBackgroundAttributes( 'container%s' ),
+
+	// Quote.
+	showQuote: {
+		type: 'boolean',
+		default: true,
+	},
+	quoteIcon: {
+		type: 'string',
+		default: 'round-thin',
+	},
+	quoteOpacity: {
+		type: 'number',
+		default: '',
+	},
+	quoteColor: {
 		type: 'string',
 		default: '',
 	},
-	customCSS: {
+	quoteSize: {
+		type: 'number',
+		default: 70,
+	},
+	...createAllCombinationAttributes(
+		'quote%s%s', {
+			type: 'number',
+			default: '',
+		},
+		[ '', 'Tablet', 'Mobile' ],
+		[ 'X', 'Y' ]
+	),
+
+	// Text.
+	text: {
+		source: 'html',
+		selector: '.ugb-blockquote__text',
+		default: descriptionPlaceholder( 'long' ),
+	},
+	...createTypographyAttributes( 'text%s' ),
+	textColor: {
 		type: 'string',
 		default: '',
 	},
-	customCSSCompiled: {
+	...createResponsiveAttributes( 'text%sAlign', {
 		type: 'string',
 		default: '',
-	},
+	} ),
 }
 
 export const name = 'ugb/blockquote'
@@ -116,4 +111,26 @@ export const settings = {
 		inserter: ! disabledBlocks.includes( name ), // Hide if disabled.
 	},
 	attributes: schema,
+
+	deprecated,
+	edit,
+	save,
+
+	// Stackable modules.
+	modules: {
+		'advanced-general': true,
+		'advanced-block-spacing': true,
+		'advanced-column-spacing': {
+			columnGap: false,
+		},
+		'advanced-responsive': true,
+		'block-background': true,
+		'block-separators': true,
+		// 'block-title': true,
+		'content-align': true,
+		'block-designs': true,
+		'custom-css': {
+			default: applyFilters( 'stackable.blockquote.custom-css.default', '' ),
+		},
+	},
 }

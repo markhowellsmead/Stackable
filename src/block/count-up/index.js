@@ -1,49 +1,33 @@
 /**
  * BLOCK: Count Up
  */
+/**
+ * External dependencies
+ */
+import {
+	createAllCombinationAttributes,
+	createBackgroundAttributes,
+	createResponsiveAttributes,
+	createTypographyAttributes,
+} from '~stackable/util'
+import { CountUpIcon } from '~stackable/icons'
 
-import { disabledBlocks, i18n } from 'stackable'
+/**
+ * Internal dependencies
+ */
+import './design'
+import deprecated from './deprecated'
+import edit from './edit'
+import save from './save'
+
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n'
-import { CountUpIcon } from '@stackable/icons'
+import { applyFilters } from '@wordpress/hooks'
+import { disabledBlocks, i18n } from 'stackable'
 
 export const schema = {
-	columns: {
-		type: 'number',
-		default: 4,
-	},
-	backgroundColorType: {
-		type: 'string',
-		default: '',
-	},
-	backgroundColor: {
-		type: 'string',
-	},
-	backgroundColor2: {
-		type: 'string',
-		default: '',
-	},
-	backgroundColorDirection: {
-		type: 'number',
-		default: 0,
-	},
-	backgroundType: {
-		type: 'string',
-		default: '',
-	},
-	backgroundImageID: {
-		type: 'number',
-	},
-	backgroundImageURL: {
-		type: 'string',
-	},
-	backgroundOpacity: {
-		type: 'number',
-		default: 5,
-	},
-	fixedBackground: {
-		type: 'boolean',
-		default: false,
-	},
 	title1: {
 		source: 'html',
 		selector: '.ugb-countup__item:nth-of-type(1) .ugb-countup__title',
@@ -104,80 +88,130 @@ export const schema = {
 		selector: '.ugb-countup__item:nth-of-type(4) .ugb-countup__description',
 		default: __( 'Description', i18n ),
 	},
-	textColor: {
-		type: 'string',
-	},
-	countColor: {
-		type: 'string',
-	},
-	countSize: {
-		type: 'number',
-		default: 40,
-	},
-	countFont: {
-		type: 'string',
-		default: 'theme',
-	},
-	countFontWeight: {
-		type: 'string',
-		default: '400',
-	},
-	contentWidth: {
-		type: 'boolean',
-		default: false,
-	},
+
 	design: {
 		type: 'string',
 		default: 'plain',
 	},
 	borderRadius: {
 		type: 'number',
-		default: 12,
+		default: '',
 	},
 	shadow: {
 		type: 'number',
-		default: 3,
-	},
-	align: {
-		type: 'string',
-	},
-
-	// Custom CSS attributes.
-	customCSSUniqueID: {
-		type: 'string',
 		default: '',
 	},
-	customCSS: {
-		type: 'string',
-		default: '',
-	},
-	customCSSCompiled: {
-		type: 'string',
-		default: '',
-	},
-
-	// Keep the old attributes. Gutenberg issue https://github.com/WordPress/gutenberg/issues/10406
-	title: {
-		type: 'string',
-	},
-	counter: {
-		type: 'string',
-	},
-	des: {
-		type: 'string',
-	},
-	fontSize: {
+	columns: {
 		type: 'number',
+		default: 2,
 	},
-	headingColor: {
+
+	// Column.
+	...createBackgroundAttributes( 'column%s' ),
+
+	// Spacing.
+	...createResponsiveAttributes( 'icon%sBottomMargin', {
+		type: 'number',
+		default: '',
+	} ),
+	...createResponsiveAttributes( 'title%sBottomMargin', {
+		type: 'number',
+		default: '',
+	} ),
+	...createResponsiveAttributes( 'number%sBottomMargin', {
+		type: 'number',
+		default: '',
+	} ),
+	...createResponsiveAttributes( 'description%sBottomMargin', {
+		type: 'number',
+		default: '',
+	} ),
+
+	// Icon.
+	showIcon: {
+		type: 'boolean',
+		default: false,
+	},
+	iconColor: {
 		type: 'string',
+		default: '',
 	},
-	desColor: {
+	...createResponsiveAttributes( 'icon%sSize', {
+		type: 'number',
+		default: '',
+	} ),
+	icon1: {
 		type: 'string',
+		default: 'fas-cogs',
 	},
-	color: {
+	icon2: {
 		type: 'string',
+		default: 'fas-hands-helping',
 	},
+	icon3: {
+		type: 'string',
+		default: 'fas-envelope',
+	},
+	icon4: {
+		type: 'string',
+		default: 'fas-globe-americas',
+	},
+
+	// Number.
+	showNumber: {
+		type: 'boolean',
+		default: true,
+	},
+	...createTypographyAttributes( 'number%s' ),
+	numberColor: {
+		type: 'string',
+		default: '',
+	},
+
+	// Title.
+	showTitle: {
+		type: 'boolean',
+		default: true,
+	},
+	titleTag: {
+		type: 'string',
+		defualt: '',
+	},
+	...createTypographyAttributes( 'title%s' ),
+	titleColor: {
+		type: 'string',
+		default: '',
+	},
+
+	// Description.
+	showDescription: {
+		type: 'boolean',
+		default: true,
+	},
+	...createTypographyAttributes( 'description%s' ),
+	descriptionColor: {
+		type: 'string',
+		default: '',
+	},
+
+	...createAllCombinationAttributes(
+		'%s%sAlign', {
+			type: 'string',
+			default: '',
+		},
+		[ 'Icon', 'Number', 'Title', 'Description' ],
+		[ '', 'Tablet', 'Mobile' ]
+	),
+
+	// Individual column colors.
+	...createAllCombinationAttributes(
+		'Column%s%sColor', {
+			type: 'string',
+			default: '',
+		},
+		[ '1', '2', '3', '4' ],
+		[ 'Background', 'Icon' ]
+	),
 }
 
 export const name = 'ugb/count-up'
@@ -197,5 +231,27 @@ export const settings = {
 	supports: {
 		align: [ 'center', 'wide', 'full' ],
 		inserter: ! disabledBlocks.includes( name ), // Hide if disabled.
+	},
+
+	deprecated,
+	edit,
+	save,
+
+	// Stackable modules.
+	modules: {
+		'advanced-general': true,
+		'advanced-block-spacing': true,
+		'advanced-column-spacing': {
+			verticalColumnAlign: true,
+		},
+		'advanced-responsive': true,
+		'block-background': true,
+		'block-separators': true,
+		'block-title': true,
+		'content-align': true,
+		'block-designs': true,
+		'custom-css': {
+			default: applyFilters( 'stackable.count-up.custom-css.default', '' ),
+		},
 	},
 }

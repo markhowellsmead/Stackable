@@ -1,14 +1,21 @@
 .ugb-panel-tabs {
-	display: grid !important;
-	grid-template-columns: 1fr 1fr 1fr;
+	.ugb-panel-tabs__wrapper {
+		display: flex !important;
+		transition: all 0.3s ease-in-out;
+		background: #fff;
+		box-shadow: none;
+		flex-wrap: nowrap;
+	}
 	button {
 		outline: none !important;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		padding: 12px 0 !important;
-		height: auto;
+		height: 80px;
+		padding: 0 !important;
+		flex: 1;
+		margin: 0 !important;
 		svg {
 			margin: 5px;
 			height: 20px;
@@ -74,4 +81,19 @@
 	.ugb-inspector-panel-controls:not(.ugb-panel-advanced) {
 		display: none;
 	}
+}
+
+// WithSticky HOC. Make the tabs stick to the top.
+.ugb--panel-tabs-dummy {
+	height: 80px;
+	margin-top: 16px;
+}
+.ugb--fixed-tabs {
+	position: fixed;
+	top: 120px; // This is recomputed in JS for accuracy.
+	width: 279px; // This is recomputed in JS for accuracy.
+	background: #fff;
+	z-index: 2;
+	box-shadow: 0 20px 30px -20px rgba(0, 0, 0, 0.1);
+	margin-top: -16px !important;
 }

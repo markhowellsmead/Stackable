@@ -1,190 +1,195 @@
-import { isDarkColor, range } from '@stackable/util'
-import { applyFilters } from '@wordpress/hooks'
-import { ButtonEdit } from '@stackable/components'
+/**
+ * Internal dependencies
+ */
+import { createStyles } from './style'
+import { showOptions } from './util'
+
+/**
+ * External dependencies
+ */
+import { range } from 'lodash'
+import {
+	BlockContainer,
+	Image,
+	ButtonEditHelper,
+	DivBackground,
+} from '~stackable/components'
+import { withBlockStyles, withUniqueClass } from '~stackable/higher-order'
 import classnames from 'classnames'
+
+/**
+ * WordPress dependencies
+ */
+import { applyFilters } from '@wordpress/hooks'
+import { compose } from '@wordpress/compose'
 import { Fragment } from '@wordpress/element'
 import { RichText } from '@wordpress/block-editor'
-import striptags from 'striptags'
 
 const save = props => {
 	const { className, attributes } = props
 	const {
-		pricingBoxColor,
-		priceColor,
-		perMonthLabelColor,
-		buttonColor,
-		buttonTextColor,
-		buttonDesign,
-		buttonIcon,
-		featureListColor,
-		columns = 2,
-		size,
-		cornerButtonRadius,
 		design = 'basic',
-		borderRadius = 12,
-		shadow = 3,
+		columns = 2,
+		shadow = '',
+		imageShape = '',
+		imageShapeStretch = false,
+		showImage = true,
+		showTitle = true,
+		showPricePrefix = true,
+		showPrice = true,
+		showPriceSuffix = true,
+		showSubPrice = true,
+		showButton = true,
+		showDescription = true,
+		imageShadow = '',
+		imageWidth = '',
+		titleTag = '',
+		buttonIcon = '',
 	} = attributes
 
 	const mainClasses = classnames( [
 		className,
-		'ugb-pricing-box',
-		'ugb-pricing-box--v2',
+		'ugb-pricing-box--v3',
 		`ugb-pricing-box--columns-${ columns }`,
 		`ugb-pricing-box--design-${ design }`,
-	], applyFilters( 'stackable.pricing-box.mainclasses', {}, design, props ) )
+	], applyFilters( 'stackable.pricing-box.mainclasses', {}, props ) )
+
+	const show = showOptions( props )
 
 	return (
-		<div className={ mainClasses }>
-			{ applyFilters( 'stackable.pricing-box.save.output.before', null, design, props ) }
-			{ range( 1, columns + 1 ).map( i => {
-				const index = i === 1 ? '' : i
-				const title = attributes[ `pricingBoxTitle${ index }` ]
-				const price = attributes[ `price${ index }` ]
-				const pricePrefix = attributes[ `pricePrefix${ index }` ]
-				const priceSuffix = attributes[ `priceSuffix${ index }` ]
-				const subPrice = attributes[ `perMonthLabel${ index }` ]
-				const buttonURL = attributes[ `url${ index }` ]
-				const buttonNewTab = attributes[ `newTab${ index }` ]
-				const buttonText = attributes[ `buttonText${ index }` ]
-				const description = attributes[ `featureList${ index }` ]
-				const imageURL = attributes[ `imageURL${ index }` ]
-				const imageAlt = attributes[ `imageAlt${ index }` ]
-				const highlightColor = attributes[ `highlightColor${ index }` ] || ''
+		<BlockContainer.Save className={ mainClasses } blockProps={ props } render={ () => (
+			<Fragment>
+				{ range( 1, columns + 1 ).map( i => {
+					const imageUrl = attributes[ `image${ i }Url` ]
+					const imageId = attributes[ `image${ i }Id` ]
+					const imageAlt = attributes[ `image${ i }Alt` ]
+					const title = attributes[ `title${ i }` ]
+					const description = attributes[ `description${ i }` ]
+					const price = attributes[ `price${ i }` ]
+					const pricePrefix = attributes[ `pricePrefix${ i }` ]
+					const priceSuffix = attributes[ `priceSuffix${ i }` ]
+					const subPrice = attributes[ `subPrice${ i }` ]
+					const buttonText = attributes[ `button${ i }Text` ]
 
-				const itemClasses = classnames( [
-					'ugb-pricing-box__item',
-				], applyFilters( 'stackable.pricing-box.itemclasses', {
-					[ `ugb--shadow-${ shadow }` ]: design !== 'plain' && shadow !== 3,
-					'ugb-pricing-box--highlighted': design !== 'plain' && highlightColor,
-					'ugb-pricing-box--is-dark': design !== 'plain' && highlightColor ? isDarkColor( highlightColor ) : false,
-				}, design, i, props ) )
+					const itemClasses = classnames( [
+						'ugb-pricing-box__item',
+						`ugb-pricing-box__item${ i }`,
+					], applyFilters( 'stackable.pricing-box.itemclasses', {
+						[ `ugb--shadow-${ shadow }` ]: show.columnBackground && shadow !== '',
+					}, props, i ) )
 
-				const styles = applyFilters( 'stackable.pricing-box.styles', {
-					item: {
-						borderRadius: design !== 'plain' && borderRadius !== 12 ? borderRadius : undefined,
-						backgroundColor: design !== 'plain' && highlightColor ? highlightColor : undefined,
-					},
-					title: {
-						color: pricingBoxColor,
-					},
-					price: {
-						color: priceColor,
-					},
-					month: {
-						color: perMonthLabelColor,
-					},
-					description: {
-						color: featureListColor,
-					},
-				}, design, i, props )
+					const imageComp = imageUrl &&
+						<div className="ugb-pricing-box__image">
+							<Image
+								imageId={ imageId }
+								src={ imageUrl }
+								width={ imageWidth }
+								alt={ imageAlt || ( showTitle && title ) }
+								shadow={ imageShadow }
+								shape={ attributes[ `image${ i }Shape` ] || imageShape }
+								shapeStretch={ attributes[ `image${ i }ShapeStretch` ] || imageShapeStretch }
+							/>
+						</div>
+					const imageBgComp = imageUrl &&
+						<div className="ugb-pricing-box__image"></div>
 
-				return (
-					<div className={ itemClasses } style={ styles.item } key={ i }>
-						{ ( () => {
-							const imageComp = imageURL && (
-								<div className="ugb-pricing-box__image">
-									<img src={ imageURL } alt={ striptags( title ? title : imageAlt ) } />
-								</div>
-							)
-							const imageBGComp = imageURL && (
-								<div className="ugb-pricing-box__image-bg" style={ {
-									backgroundImage: `url(${ imageURL })`,
-								} }>
-								</div>
-							)
-							const titleComp = ! RichText.isEmpty( title ) && (
-								<RichText.Content
-									tagName="h3"
-									className="ugb-pricing-box__title"
-									style={ styles.title }
-									value={ title }
-								/>
-							)
-							const priceComp = ( ! RichText.isEmpty( price ) || ! RichText.isEmpty( subPrice ) ) && (
-								<div className="ugb-pricing-box__price-wrapper">
-									{ ! RichText.isEmpty( price ) && (
-										<div className="ugb-pricing-box__price-line">
-											{ ! RichText.isEmpty( pricePrefix ) && (
-												<RichText.Content
-													tagName="span"
-													className="ugb-pricing-box__price-prefix"
-													style={ styles.price }
-													value={ pricePrefix }
-												/>
-											) }
-											<RichText.Content
-												tagName="span"
-												className="ugb-pricing-box__price"
-												style={ styles.price }
-												value={ price }
-											/>
-											{ ! RichText.isEmpty( priceSuffix ) && (
-												<RichText.Content
-													tagName="span"
-													className="ugb-pricing-box__price-suffix"
-													style={ styles.price }
-													value={ priceSuffix }
-												/>
-											) }
-										</div>
-									) }
-									{ ! RichText.isEmpty( subPrice ) && (
+					const titleComp = ! RichText.isEmpty( title ) && (
+						<RichText.Content
+							tagName={ titleTag || 'h3' }
+							className="ugb-pricing-box__title"
+							value={ title }
+						/>
+					)
+					const priceComp = ! RichText.isEmpty( price ) && (
+						<div className="ugb-pricing-box__price-wrapper">
+							{ ! RichText.isEmpty( price ) && (
+								<div className="ugb-pricing-box__price-line">
+									{ showPricePrefix && ! RichText.isEmpty( pricePrefix ) && (
 										<RichText.Content
-											tagName="p"
-											className="ugb-pricing-box__subprice"
-											style={ styles.month }
-											value={ subPrice }
+											tagName="span"
+											className="ugb-pricing-box__price-prefix"
+											value={ pricePrefix }
+										/>
+									) }
+									<RichText.Content
+										tagName="span"
+										className="ugb-pricing-box__price"
+										value={ price }
+									/>
+									{ showPriceSuffix && ! RichText.isEmpty( priceSuffix ) && (
+										<RichText.Content
+											tagName="span"
+											className="ugb-pricing-box__price-suffix"
+											value={ priceSuffix }
 										/>
 									) }
 								</div>
-							)
-							const buttonComp = buttonText && !! buttonText.length && (
-								<div className="ugb-pricing-box__button">
-									<ButtonEdit.Content
-										size={ size }
-										url={ buttonURL }
-										newTab={ buttonNewTab }
-										color={ buttonTextColor }
-										text={ buttonText }
-										design={ buttonDesign }
-										icon={ buttonIcon }
-										backgroundColor={ buttonColor }
-										borderRadius={ cornerButtonRadius }
-									/>
-								</div>
-							)
-							const descriptionComp = ! RichText.isEmpty( description ) && (
-								<RichText.Content
-									tagName="p"
-									className="ugb-pricing-box__description"
-									style={ styles.description }
-									value={ description }
-								/>
-							)
-							const comps = {
-								imageComp,
-								imageBGComp,
-								titleComp,
-								priceComp,
-								buttonComp,
-								descriptionComp,
-							}
-							return applyFilters( 'stackable.pricing-box.save.output', (
+							) }
+						</div>
+					)
+					const subPriceComp = ! RichText.isEmpty( subPrice ) &&
+						<RichText.Content
+							tagName="p"
+							className="ugb-pricing-box__subprice"
+							value={ subPrice }
+						/>
+					const buttonComp = buttonText && !! buttonText.length && (
+						<div className="ugb-pricing-box__button">
+							<ButtonEditHelper.Content
+								attrNameTemplate={ `button%s` }
+								blockAttributes={ props.attributes }
+								text={ buttonText }
+								icon={ attributes[ `button${ i }Icon` ] || buttonIcon }
+								url={ attributes[ `button${ i }Url` ] }
+								newTab={ attributes[ `button${ i }NewTab` ] }
+								noFollow={ attributes[ `button${ i }NoFollow` ] }
+							/>
+						</div>
+					)
+					const descriptionComp = ! RichText.isEmpty( description ) && (
+						<RichText.Content
+							tagName="p"
+							className="ugb-pricing-box__description"
+							value={ description }
+						/>
+					)
+					const comps = {
+						imageComp,
+						imageBgComp,
+						titleComp,
+						priceComp,
+						subPriceComp,
+						buttonComp,
+						descriptionComp,
+					}
+
+					return (
+						<DivBackground
+							className={ itemClasses }
+							backgroundAttrName="column%s"
+							blockProps={ props }
+							showBackground={ show.columnBackground }
+							key={ i }
+						>
+							{ applyFilters( 'stackable.pricing-box.save.output', (
 								<Fragment>
-									{ imageComp }
-									{ titleComp }
-									{ priceComp }
-									{ buttonComp }
-									{ descriptionComp }
+									{ showImage && imageComp }
+									{ showTitle && titleComp }
+									{ showPrice && priceComp }
+									{ showSubPrice && subPriceComp }
+									{ showButton && buttonComp }
+									{ showDescription && descriptionComp }
 								</Fragment>
-							), design, comps, i, props )
-						} )() }
-					</div>
-				)
-			} ) }
-			{ applyFilters( 'stackable.pricing-box.save.output.after', null, design, props ) }
-		</div>
+							), props, comps, i ) }
+						</DivBackground>
+					)
+				} ) }
+			</Fragment>
+		) } />
 	)
 }
 
-export default save
+export default compose(
+	withUniqueClass,
+	withBlockStyles( createStyles ),
+)( save )

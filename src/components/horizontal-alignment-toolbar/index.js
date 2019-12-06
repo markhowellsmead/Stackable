@@ -4,8 +4,15 @@
  *
  * The code is mostly from AlignmentToolbar
  */
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n'
 import { compose } from '@wordpress/compose'
+
+/**
+ * External dependencies
+ */
 import { find } from 'lodash'
 import { i18n } from 'stackable'
 import { Toolbar } from '@wordpress/components'
@@ -68,7 +75,8 @@ export default compose(
 	withSelect( ( select, {
 		clientId, isLargeViewport, isCollapsed,
 	} ) => {
-		const { getBlockRootClientId, getEditorSettings } = select( 'core/editor' )
+		const { getEditorSettings } = select( 'core/editor' )
+		const { getBlockRootClientId } = select( 'core/block-editor' )
 		return {
 			isCollapsed: isCollapsed || ! isLargeViewport || (
 				! getEditorSettings().hasFixedToolbar &&

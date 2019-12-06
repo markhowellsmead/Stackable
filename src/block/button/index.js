@@ -5,149 +5,51 @@
  * Simple block, renders and saves the same content without any interactivity.
  */
 
+/**
+ * External dependencies
+ */
+import { ButtonIcon } from '~stackable/icons'
+import { createButtonAttributes } from '~stackable/util'
+
+/**
+ * Internal dependencies
+ */
+import './design'
+import deprecated from './deprecated'
+import edit from './edit'
+import save from './save'
 import { disabledBlocks, i18n } from 'stackable'
+
+/**
+ * WordPress dependencies
+ */
+import { addFilter, applyFilters } from '@wordpress/hooks'
 import { __ } from '@wordpress/i18n'
-import { ButtonIcon } from '@stackable/icons'
 
 export const schema = {
-	buttons: {
-		type: 'number',
-		default: 1,
-	},
-	url: {
-		type: 'string',
-		source: 'attribute',
-		selector: 'a',
-		attribute: 'href',
-		default: '',
-	},
-	newTab: {
-		type: 'boolean',
-		source: 'attribute',
-		selector: 'a',
-		attribute: 'target',
-		default: false,
-	},
-	text: {
-		source: 'html',
-		selector: 'a span',
-		default: __( 'Button text', i18n ),
-	},
-	align: {
-		type: 'string',
-		default: 'center',
-	},
-	color: {
-		type: 'string',
-	},
-	textColor: {
-		type: 'string',
-	},
-	size: {
-		type: 'string',
-		default: 'normal',
-	},
-	cornerButtonRadius: {
-		type: 'number',
-		default: 4,
-	},
 	design: {
 		type: 'string',
 		default: 'basic',
 	},
-	icon: {
-		type: 'string',
-	},
-
-	url2: {
-		type: 'string',
-		source: 'attribute',
-		selector: 'div:nth-of-type(2) .ugb-button',
-		attribute: 'href',
+	borderRadius: {
+		type: 'number',
 		default: '',
 	},
-	newTab2: {
+	collapseOn: {
+		type: 'string',
+		default: '',
+	},
+	showButton2: {
 		type: 'boolean',
-		source: 'attribute',
-		selector: 'div:nth-of-type(2) .ugb-button',
-		attribute: 'target',
 		default: false,
 	},
-	text2: {
-		source: 'html',
-		selector: 'div:nth-of-type(2) .ugb-button span',
-		default: __( 'Button text', i18n ),
-	},
-	color2: {
-		type: 'string',
-	},
-	textColor2: {
-		type: 'string',
-		default: '#ffffff',
-	},
-	size2: {
-		type: 'string',
-		default: 'normal',
-	},
-	design2: {
-		type: 'string',
-		default: 'basic',
-	},
-	icon2: {
-		type: 'string',
-	},
-
-	url3: {
-		type: 'string',
-		source: 'attribute',
-		selector: 'div:nth-of-type(3) .ugb-button',
-		attribute: 'href',
-		default: '',
-	},
-	newTab3: {
+	showButton3: {
 		type: 'boolean',
-		source: 'attribute',
-		selector: 'div:nth-of-type(3) .ugb-button',
-		attribute: 'target',
 		default: false,
 	},
-	text3: {
-		source: 'html',
-		selector: 'div:nth-of-type(3) .ugb-button span',
-		default: __( 'Button text', i18n ),
-	},
-	color3: {
-		type: 'string',
-	},
-	textColor3: {
-		type: 'string',
-		default: '#ffffff',
-	},
-	size3: {
-		type: 'string',
-		default: 'normal',
-	},
-	design3: {
-		type: 'string',
-		default: 'basic',
-	},
-	icon3: {
-		type: 'string',
-	},
-
-	// Custom CSS attributes.
-	customCSSUniqueID: {
-		type: 'string',
-		default: '',
-	},
-	customCSS: {
-		type: 'string',
-		default: '',
-	},
-	customCSSCompiled: {
-		type: 'string',
-		default: '',
-	},
+	...createButtonAttributes( 'button1%s', { selector: '.ugb-button1' } ),
+	...createButtonAttributes( 'button2%s', { selector: '.ugb-button2' } ),
+	...createButtonAttributes( 'button3%s', { selector: '.ugb-button3' } ),
 }
 
 export const name = 'ugb/button'
@@ -165,4 +67,54 @@ export const settings = {
 	supports: {
 		inserter: ! disabledBlocks.includes( name ), // Hide if disabled.
 	},
+
+	deprecated,
+	edit,
+	save,
+
+	// Stackable modules.
+	modules: {
+		'advanced-general': true,
+		'advanced-block-spacing': true,
+		'advanced-responsive': true,
+		'block-background': true,
+		'block-separators': true,
+		// 'block-title': true,
+		'content-align': true,
+		'block-designs': true,
+		'custom-css': {
+			default: applyFilters( 'stackable.button.custom-css.default', '' ),
+		},
+	},
 }
+
+// Change the main class name since we're using `ugb-button` for the button element.
+addFilter( 'stackable.button.mainClassName', 'stackable/button', () => {
+	return 'ugb-button-wrapper'
+} )
+
+// If the alignment was changed, but the design doesn't support it, go back to the basic design to allow the alignment change.
+addFilter( 'stackable.button.setAttributes', 'stackable/button/contentAlign', ( attributes, blockProps ) => {
+	if ( typeof attributes.contentAlign === 'undefined' ) {
+		return attributes
+	}
+
+	if ( ! [ '', 'basic' ].includes( blockProps.attributes.design ) ) {
+		attributes.design = 'basic'
+	}
+
+	return attributes
+} )
+
+// If the design was changed, but the design doesn't support alignment, reset the alignment attribute.
+addFilter( 'stackable.button.setAttributes', 'stackable/button/design', attributes => {
+	if ( typeof attributes.design === 'undefined' ) {
+		return attributes
+	}
+
+	if ( ! [ '', 'basic' ].includes( attributes.design ) ) {
+		attributes.contentAlign = ''
+	}
+
+	return attributes
+} )

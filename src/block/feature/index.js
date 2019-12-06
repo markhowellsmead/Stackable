@@ -2,153 +2,150 @@
  * BLOCK: Feature Block.
  */
 
-import { disabledBlocks, i18n } from 'stackable'
+/**
+ * Internal dependencies
+ */
+import './design'
+import deprecated from './deprecated'
+import edit from './edit'
+import save from './save'
+
+/**
+ * External dependencies
+ */
+import {
+	descriptionPlaceholder,
+	createBackgroundAttributes,
+	createTypographyAttributes,
+	createButtonAttributes,
+	createResponsiveAttributes,
+	createAllCombinationAttributes,
+	createImageAttributes,
+	createImageBackgroundAttributes,
+} from '~stackable/util'
+import { FeatureIcon } from '~stackable/icons'
+
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n'
-import { descriptionPlaceholder } from '@stackable/util'
-import { FeatureIcon } from '@stackable/icons'
+import { disabledBlocks, i18n } from 'stackable'
+import { applyFilters } from '@wordpress/hooks'
 
 export const schema = {
-	textColor: {
-		type: 'string',
-	},
-	invert: {
-		type: 'boolean',
-		default: false,
-	},
-	contentAlign: {
-		type: 'string',
-		default: 'left',
-	},
-	imageSize: {
-		type: 'number',
-		default: 400,
-	},
-	imageID: {
-		type: 'number',
-	},
-	imageUrl: {
-		type: 'url',
-	},
-	imageAlt: {
-		type: 'string',
-	},
-	title: {
-		source: 'html',
-		selector: 'h2',
-		default: __( 'Title for This Block', i18n ),
-	},
-	description: {
-		source: 'html',
-		selector: 'p',
-		default: descriptionPlaceholder( 'medium' ),
-	},
-	buttonURL: {
-		type: 'string',
-		source: 'attribute',
-		selector: '.ugb-button',
-		attribute: 'href',
-		default: '',
-	},
-	buttonNewTab: {
-		type: 'boolean',
-		source: 'attribute',
-		selector: '.ugb-button',
-		attribute: 'target',
-		default: false,
-	},
-	buttonText: {
-		source: 'html',
-		selector: '.ugb-button span',
-		default: __( 'Button text', i18n ),
-	},
-	buttonColor: {
-		type: 'string',
-	},
-	buttonTextColor: {
-		type: 'string',
-	},
-	buttonSize: {
-		type: 'string',
-		default: 'normal',
-	},
-	buttonBorderRadius: {
-		type: 'number',
-		default: 4,
-	},
-	buttonDesign: {
-		type: 'string',
-		default: 'basic',
-	},
-	buttonIcon: {
-		type: 'string',
-	},
-	backgroundColorType: {
-		type: 'string',
-		default: '',
-	},
-	backgroundColor: {
-		type: 'string',
-	},
-	backgroundColor2: {
-		type: 'string',
-		default: '',
-	},
-	backgroundColorDirection: {
-		type: 'number',
-		default: 0,
-	},
-	backgroundType: {
-		type: 'string',
-		default: '',
-	},
-	backgroundImageID: {
-		type: 'number',
-	},
-	backgroundImageURL: {
-		type: 'string',
-	},
-	backgroundOpacity: {
-		type: 'number',
-		default: 5,
-	},
-	fixedBackground: {
-		type: 'boolean',
-		default: false,
-	},
-	contentWidth: {
-		type: 'boolean',
-		default: false,
-	},
 	design: {
 		type: 'string',
 		default: 'plain',
 	},
+	...createResponsiveAttributes( 'imageColumn%sWidth', {
+		type: 'number',
+		default: '',
+	} ),
+	...createResponsiveAttributes( 'container%sWidth', {
+		type: 'number',
+		default: '',
+	} ),
+	...createResponsiveAttributes( 'container%sOffset', {
+		type: 'number',
+		default: '',
+	} ),
+	invert: {
+		type: 'boolean',
+		default: false,
+	},
 	borderRadius: {
 		type: 'number',
-		default: 12,
+		default: '',
 	},
 	shadow: {
 		type: 'number',
-		default: 3,
+		default: '',
 	},
-	align: {
+
+	// Background.
+	...createBackgroundAttributes( 'column%s' ),
+
+	// Image.
+	...createImageAttributes( 'image%s' ),
+	...createImageBackgroundAttributes( 'image%s' ),
+	imageShapeStretch: {
+		type: 'boolean',
+		default: true,
+	},
+	...createResponsiveAttributes( 'imageBackground%sHeight', {
+		type: 'number',
+		default: '',
+	} ),
+
+	// Title.
+	title: {
+		source: 'html',
+		selector: '.ugb-feature__title',
+		default: __( 'Title for This Block', i18n ),
+	},
+	showTitle: {
+		type: 'boolean',
+		default: true,
+	},
+	titleTag: {
 		type: 'string',
+		defualt: '',
 	},
-	hoverEffect: {
+	...createTypographyAttributes( 'title%s' ),
+	titleColor: {
 		type: 'string',
 		default: '',
 	},
 
-	// Custom CSS attributes.
-	customCSSUniqueID: {
-		type: 'string',
-		default: '',
+	// Description.
+	description: {
+		source: 'html',
+		selector: '.ugb-feature__description',
+		default: descriptionPlaceholder( 'medium' ),
 	},
-	customCSS: {
-		type: 'string',
-		default: '',
+	showDescription: {
+		type: 'boolean',
+		default: true,
 	},
-	customCSSCompiled: {
+	...createTypographyAttributes( 'description%s' ),
+	descriptionColor: {
+		type: 'string',
+		defualt: '',
+	},
+
+	// Button.
+	showButton: {
+		type: 'boolean',
+		default: true,
+	},
+	...createButtonAttributes( 'button%s', { selector: '.ugb-button' } ),
+
+	// Spacing.
+	...createResponsiveAttributes( 'title%sBottomMargin', {
+		type: 'number',
+		default: '',
+	} ),
+	...createResponsiveAttributes( 'description%sBottomMargin', {
+		type: 'number',
+		default: '',
+	} ),
+	...createResponsiveAttributes( 'button%sBottomMargin', {
+		type: 'number',
+		default: '',
+	} ),
+
+	// Alignments.
+	...createAllCombinationAttributes(
+		'%s%sAlign', {
+			type: 'string',
+			default: '',
+		},
+		[ 'Title', 'Description', 'Button' ],
+		[ '', 'Tablet', 'Mobile' ]
+	),
+
+	// Effects.
+	hoverEffect: {
 		type: 'string',
 		default: '',
 	},
@@ -169,5 +166,28 @@ export const settings = {
 		align: [ 'center', 'wide', 'full' ],
 		inserter: ! disabledBlocks.includes( name ), // Hide if disabled.
 	},
+
+	deprecated,
+	edit,
+	save,
+
 	attributes: schema,
+
+	// Stackable modules.
+	modules: {
+		'advanced-general': true,
+		'advanced-block-spacing': true,
+		// 'advanced-column-spacing': {
+		// 	columnGap: false,
+		// },
+		'advanced-responsive': true,
+		'block-background': true,
+		'block-separators': true,
+		// 'block-title': true,
+		'content-align': true,
+		'block-designs': true,
+		'custom-css': {
+			default: applyFilters( 'stackable.feature.custom-css.default', '' ),
+		},
+	},
 }

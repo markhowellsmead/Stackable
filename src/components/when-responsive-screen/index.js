@@ -1,6 +1,15 @@
+/**
+ * External dependencies
+ */
+import { getSelectedScreen } from '~stackable/util'
+
+/**
+ * WordPress dependencies
+ */
 import { addAction, removeAction } from '@wordpress/hooks'
-import { Component, Fragment } from '@wordpress/element'
-import { getSelectedScreen } from '@stackable/util'
+import {
+	Children, cloneElement, Component, Fragment,
+} from '@wordpress/element'
 import { withInstanceId } from '@wordpress/compose'
 
 class WhenResponsiveScreen extends Component {
@@ -27,9 +36,13 @@ class WhenResponsiveScreen extends Component {
 	}
 
 	render() {
+		const children = Children.toArray( this.props.children ).map( child => {
+			return cloneElement( child, { screens: this.props.screens } )
+		} )
+
 		return (
 			<Fragment>
-				{ this.state.screen === this.props.screen && this.props.children }
+				{ this.state.screen === this.props.screen && children }
 			</Fragment>
 		)
 	}
@@ -37,6 +50,7 @@ class WhenResponsiveScreen extends Component {
 
 WhenResponsiveScreen.defaultProps = {
 	screen: 'desktop',
+	screens: [ 'desktop', 'tablet', 'mobile' ],
 }
 
 export default withInstanceId( WhenResponsiveScreen )

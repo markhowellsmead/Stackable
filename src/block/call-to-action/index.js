@@ -4,144 +4,119 @@
  * Registering a basic block with Gutenberg.
  * Simple block, renders and saves the same content without any interactivity.
  */
+/**
+ * External dependencies
+ */
+import {
+	createAllCombinationAttributes,
+	createBackgroundAttributes,
+	createButtonAttributes,
+	createResponsiveAttributes,
+	createTypographyAttributes,
+	descriptionPlaceholder,
+} from '~stackable/util'
+import { CTAIcon } from '~stackable/icons'
 import { disabledBlocks, i18n } from 'stackable'
+
+/**
+ * Internal dependencies
+ */
+import './design'
+import deprecated from './deprecated'
+import edit from './edit'
+import save from './save'
+
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n'
-import { CTAIcon } from '@stackable/icons'
-import { descriptionPlaceholder } from '@stackable/util'
+import { applyFilters } from '@wordpress/hooks'
 
 const schema = {
-	url: {
-		type: 'string',
-		source: 'attribute',
-		selector: '.ugb-button',
-		attribute: 'href',
-		default: '',
-	},
-	newTab: {
-		type: 'boolean',
-		source: 'attribute',
-		selector: '.ugb-button',
-		attribute: 'target',
-		default: false,
-	},
-	ctaTitle: {
-		source: 'html',
-		selector: 'h3',
-		default: __( 'Title for This Block', i18n ),
-	},
-	bodyText: {
-		source: 'html',
-		selector: 'p',
-		default: descriptionPlaceholder(),
-	},
-	buttonText: {
-		source: 'html',
-		selector: '.ugb-button span',
-		default: __( 'Button text', i18n ),
-	},
-	buttonDesign: {
-		type: 'string',
-		default: 'basic',
-	},
-	color: {
-		type: 'string',
-	},
-	textColor: {
-		type: 'string',
-		// default: '#ffffff',
-	},
-	titleColor: {
-		type: 'string',
-	},
-	bodyTextColor: {
-		type: 'string',
-	},
-	size: {
-		type: 'string',
-		default: 'normal',
-	},
-	borderButtonRadius: {
-		type: 'number',
-		default: 4,
-	},
-	backgroundColorType: {
-		type: 'string',
-		default: '',
-	},
-	backgroundColor: {
-		type: 'string',
-	},
-	backgroundColor2: {
-		type: 'string',
-		default: '',
-	},
-	backgroundColorDirection: {
-		type: 'number',
-		default: 0,
-	},
-	backgroundType: {
-		type: 'string',
-		default: '',
-	},
-	backgroundImageID: {
-		type: 'number',
-	},
-	backgroundImageURL: {
-		type: 'string',
-	},
-	backgroundOpacity: {
-		type: 'number',
-		default: 5,
-	},
-	fixedBackground: {
-		type: 'boolean',
-		default: false,
-	},
-	buttonIcon: {
-		type: 'string',
-	},
-	contentWidth: {
-		type: 'boolean',
-		default: false,
-	},
 	design: {
 		type: 'string',
 		default: 'basic',
 	},
 	borderRadius: {
 		type: 'number',
-		default: 12,
+		default: '',
 	},
 	shadow: {
 		type: 'number',
-		default: 3,
+		default: '',
 	},
-	align: {
+
+	// Title.
+	title: {
+		source: 'html',
+		selector: 'h3, .ugb-cta__title',
+		default: __( 'Title for This Block', i18n ),
+	},
+	showTitle: {
+		type: 'boolean',
+		default: true,
+	},
+	titleTag: {
 		type: 'string',
+		defualt: '',
 	},
+	...createTypographyAttributes( 'title%s' ),
+	titleColor: {
+		type: 'string',
+		default: '',
+	},
+
+	// Description.
+	description: {
+		source: 'html',
+		selector: 'p, .ugb-cta__description',
+		default: descriptionPlaceholder(),
+	},
+	showDescription: {
+		type: 'boolean',
+		default: true,
+	},
+	...createTypographyAttributes( 'description%s' ),
+	descriptionColor: {
+		type: 'string',
+		default: '',
+	},
+
+	// Button.
+	showButton: {
+		type: 'boolean',
+		default: true,
+	},
+	...createButtonAttributes( 'button%s', { selector: '.ugb-button' } ),
+
+	...createBackgroundAttributes( 'column%s' ),
+
 	hoverEffect: {
 		type: 'string',
 		default: '',
 	},
 
-	// Custom CSS attributes.
-	customCSSUniqueID: {
-		type: 'string',
+	...createResponsiveAttributes( 'title%sBottomMargin', {
+		type: 'number',
 		default: '',
-	},
-	customCSS: {
-		type: 'string',
+	} ),
+	...createResponsiveAttributes( 'description%sBottomMargin', {
+		type: 'number',
 		default: '',
-	},
-	customCSSCompiled: {
-		type: 'string',
+	} ),
+	...createResponsiveAttributes( 'button%sBottomMargin', {
+		type: 'number',
 		default: '',
-	},
+	} ),
 
-	// Keep the old attributes. Gutenberg issue https://github.com/WordPress/gutenberg/issues/10406
-	bgColor: {
-		type: 'string',
-	},
+	...createAllCombinationAttributes(
+		'%s%sAlign', {
+			type: 'string',
+			default: '',
+		},
+		[ 'Title', 'Description', 'Button' ],
+		[ '', 'Tablet', 'Mobile' ]
+	),
 }
 
 export const name = 'ugb/cta'
@@ -160,5 +135,27 @@ export const settings = {
 	supports: {
 		align: [ 'center', 'wide', 'full' ],
 		inserter: ! disabledBlocks.includes( name ), // Hide if disabled.
+	},
+
+	deprecated,
+	edit,
+	save,
+
+	// Stackable modules.
+	modules: {
+		'advanced-general': true,
+		'advanced-block-spacing': true,
+		'advanced-column-spacing': {
+			columnGap: false,
+		},
+		'advanced-responsive': true,
+		'block-background': true,
+		'block-separators': true,
+		// 'block-title': true,
+		'content-align': true,
+		'block-designs': true,
+		'custom-css': {
+			default: applyFilters( 'stackable.cta.custom-css.default', '' ),
+		},
 	},
 }

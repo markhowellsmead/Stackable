@@ -14,7 +14,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { i18n } from 'stackable'
 import { omit } from 'lodash'
-import { IconSearchPopover } from '@stackable/components'
+import { IconSearchPopover } from '~stackable/components'
 
 /**
  * Check whether the string value is a valid icon.
@@ -120,7 +120,7 @@ const IconControl = withInstanceId( withState( {
 				<Button
 					onClick={ () => {
 						props.onChange( '' )
-						props.onClose()
+						setState( { openPopover: false } )
 					} }
 					isSmall
 					isDefault

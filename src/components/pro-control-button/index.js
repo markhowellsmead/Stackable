@@ -1,6 +1,13 @@
+/**
+ * External dependencies
+ */
+import { ProControl } from '~stackable/components'
 import classnames from 'classnames'
+
+/**
+ * WordPress dependencies
+ */
 import { Component } from '@wordpress/element'
-import { ProControl } from '@stackable/components'
 
 class ProControlButton extends Component {
 	constructor() {
@@ -23,7 +30,7 @@ class ProControlButton extends Component {
 		} )
 
 		return (
-			<div>
+			<div className="components-base-control">
 				<button className="ugb-pro-control-more-dots" onClick={ this.onClick }>
 					<div className="ugb-pro-control-more-dots__dot"></div>
 					<div className="ugb-pro-control-more-dots__dot"></div>
@@ -31,9 +38,11 @@ class ProControlButton extends Component {
 				</button>
 				<div className={ wrapperClasses } >
 					<ProControl
+						type={ this.props.type }
 						title={ this.props.title }
 						description={ this.props.description }
 						button={ this.props.button }
+						showButton={ this.props.showButton }
 					/>
 				</div>
 			</div>

@@ -1,56 +1,127 @@
-import { i18n, showProNotice } from 'stackable'
-import { PanelBody, RangeControl } from '@wordpress/components'
-import { __ } from '@wordpress/i18n'
-import { applyFilters } from '@wordpress/hooks'
+/**
+ * External dependencies
+ */
+import {
+	AdvancedRangeControl,
+	BlockContainer,
+	WhenResponsiveScreen,
+	BackgroundControlsHelper,
+	ControlSeparator,
+	DivBackground,
+} from '~stackable/components'
+import {
+	withBlockStyles,
+	withGoogleFont,
+	withSetAttributeHook,
+	withTabbedInspector,
+	withUniqueClass,
+} from '~stackable/higher-order'
 import classnames from 'classnames'
+
+/**
+ * Internal dependencies
+ */
+import createStyles from './style'
+
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n'
+import { addFilter } from '@wordpress/hooks'
+import { compose } from '@wordpress/compose'
 import { Fragment } from '@wordpress/element'
-import { InspectorControls } from '@wordpress/block-editor'
-import { ProControl } from '@stackable/components'
+import { i18n } from 'stackable'
+import { PanelBody } from '@wordpress/components'
 
-const edit = props => {
-	const { className } = props
+addFilter( 'stackable.spacer.edit.inspector.style.before', 'stackable/spacer', ( output, props ) => {
+	const { setAttributes } = props
 	const {
-		height,
-		design = '',
+		height = '',
+		tabletHeight = '',
+		mobileHeight = '',
+		heightUnit = 'px',
+		tabletHeightUnit = 'px',
+		mobileHeightUnit = 'px',
 	} = props.attributes
-
-	const mainClasses = classnames( [
-		className,
-		'ugb-spacer',
-	], applyFilters( 'stackable.spacer.mainclasses', {}, design, props ) )
 
 	return (
 		<Fragment>
-			<InspectorControls>
-				<PanelBody>
-					<RangeControl
+			{ output }
+			<PanelBody title={ __( 'General', i18n ) }>
+				<WhenResponsiveScreen>
+					<AdvancedRangeControl
 						label={ __( 'Height', i18n ) }
+						units={ [ 'px', 'vh' ] }
+						min={ [ 1, 0 ] }
+						max={ [ 500, 100 ] }
+						step={ [ 1, 1 ] }
+						allowReset={ true }
 						value={ height }
-						min="30"
-						max="200"
-						onChange={ height => {
-							props.setAttributes( { height } )
-						} }
+						unit={ heightUnit }
+						onChange={ height => setAttributes( { height } ) }
+						onChangeUnit={ heightUnit => setAttributes( { heightUnit } ) }
+						placeholder={ [ 50 ] }
 					/>
-				</PanelBody>
-				{ showProNotice &&
-					<PanelBody
-						initialOpen={ false }
-						title={ __( 'Custom CSS', i18n ) }
-					>
-						<ProControl
-							title={ __( 'Say Hello to Custom CSS 👋', i18n ) }
-							description={ __( 'Further tweak this block by adding guided custom CSS rules. This feature is only available on Stackable Premium', i18n ) }
-						/>
-					</PanelBody>
-				}
-				{ applyFilters( 'stackable.spacer.edit.inspector.after', null, design, props ) }
-			</InspectorControls>
-			<div className={ mainClasses } style={ { height: height + 'px' } }>
-				{ applyFilters( 'stackable.spacer.edit.output.before', null, design, props ) }
-			</div>
+				</WhenResponsiveScreen>
+				<WhenResponsiveScreen screen="tablet">
+					<AdvancedRangeControl
+						label={ __( 'Height', i18n ) }
+						units={ [ 'px', 'vh' ] }
+						min={ [ 0, 0 ] }
+						max={ [ 500, 100 ] }
+						step={ [ 1, 1 ] }
+						allowReset={ true }
+						value={ tabletHeight }
+						unit={ tabletHeightUnit }
+						onChange={ tabletHeight => setAttributes( { tabletHeight } ) }
+						onChangeUnit={ tabletHeightUnit => setAttributes( { tabletHeightUnit } ) }
+					/>
+				</WhenResponsiveScreen>
+				<WhenResponsiveScreen screen="mobile">
+					<AdvancedRangeControl
+						label={ __( 'Height', i18n ) }
+						units={ [ 'px', 'vh' ] }
+						min={ [ 0, 0 ] }
+						max={ [ 500, 100 ] }
+						step={ [ 1, 1 ] }
+						allowReset={ true }
+						value={ mobileHeight }
+						unit={ mobileHeightUnit }
+						onChange={ mobileHeight => setAttributes( { mobileHeight } ) }
+						onChangeUnit={ mobileHeightUnit => setAttributes( { mobileHeightUnit } ) }
+					/>
+				</WhenResponsiveScreen>
+
+				<ControlSeparator />
+
+				<BackgroundControlsHelper
+					attrNameTemplate="%s"
+					setAttributes={ setAttributes }
+					blockAttributes={ props.attributes }
+				/>
+			</PanelBody>
 		</Fragment>
 	)
+} )
+
+const edit = props => {
+	const mainClasses = classnames( [
+		props.className,
+		'ugb-spacer--v2',
+	] )
+	return <BlockContainer.Edit className={ mainClasses } blockProps={ props } render={ () => (
+		<DivBackground
+			className="ugb-spacer--inner"
+			backgroundAttrName="%s"
+			blockProps={ props }
+		/>
+	) } />
 }
 
-export default edit
+export default compose(
+	withUniqueClass,
+	withSetAttributeHook,
+	withGoogleFont,
+	withTabbedInspector( [ 'style', 'advanced' ] ),
+	withBlockStyles( createStyles, { editorMode: true } ),
+)( edit )

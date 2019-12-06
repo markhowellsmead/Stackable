@@ -12,7 +12,8 @@ const autoprefixer = require( 'autoprefixer' ),
 	path = require( 'path' ),
 	postcss = require( 'gulp-postcss' ),
 	rename = require( 'gulp-rename' ),
-	sass = require( 'gulp-sass' )
+	sass = require( 'gulp-sass' ),
+	zip = require( 'gulp-zip' )
 
 // These files are the ones which will be included in the `package` task.
 const buildInclude = [
@@ -22,6 +23,7 @@ const buildInclude = [
 	path.resolve( __dirname, './freemius/**' ),
 	path.resolve( __dirname, './images/**' ),
 	path.resolve( __dirname, './src/welcome/images/**' ), // Welcome screen / settings images.
+	'!' + path.resolve( __dirname, './dist/deprecation-tests.json' ),
 ]
 
 const postCSSOptions = [
@@ -81,6 +83,14 @@ gulp.task( 'style', function() {
 		.pipe( gulp.dest( 'dist/' ) )
 } )
 
+gulp.task( 'style-deprecated', function() {
+	return gulp.src( [ path.resolve( __dirname, './src/deprecated/*.scss' ) ] )
+		.pipe( sass( sassOptions ).on( 'error', sass.logError ) )
+		.pipe( concat( 'frontend_blocks_deprecated.css' ) )
+		.pipe( postcss( postCSSOptions ) )
+		.pipe( gulp.dest( 'dist/' ) )
+} )
+
 gulp.task( 'welcome-styles', function() {
 	return gulp.src( path.resolve( __dirname, './src/welcome/admin.scss' ) )
 		.pipe( sass( sassOptions ).on( 'error', sass.logError ) )
@@ -92,7 +102,7 @@ gulp.task( 'welcome-styles', function() {
 		.pipe( gulp.dest( 'dist/' ) )
 } )
 
-gulp.task( 'build-process', gulp.parallel( 'style', 'style-editor', 'welcome-styles' ) )
+gulp.task( 'build-process', gulp.parallel( 'style', 'style-editor', 'welcome-styles', 'style-deprecated' ) )
 
 gulp.task( 'build', gulp.series( 'build-process' ) )
 
@@ -101,10 +111,17 @@ gulp.task( 'package', function() {
 		.pipe( gulp.dest( 'build/stackable' ) )
 } )
 
+// Zips the build folder.
+gulp.task( 'zip', function() {
+	return gulp.src( 'build/stackable/**/*' )
+		.pipe( zip( 'stackable.zip' ) )
+		.pipe( gulp.dest( 'build' ) )
+} )
+
 const watchFuncs = () => {
 	gulp.watch(
 		[ path.resolve( __dirname, './src/**/*.scss' ) ],
-		gulp.parallel( [ 'style', 'style-editor', 'welcome-styles' ] )
+		gulp.parallel( [ 'style', 'style-editor', 'welcome-styles', 'style-deprecated' ] )
 	)
 	gulp.watch(
 		[ path.resolve( __dirname, './src/welcome/**/*.scss' ) ],

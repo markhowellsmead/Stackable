@@ -4,13 +4,25 @@
  *
  * The code is mostly from AlignmentToolbar
  */
-import { __ } from '@wordpress/i18n'
-import { compose } from '@wordpress/compose'
-import { find } from 'lodash'
-import { i18n } from 'stackable'
+
+/**
+ * Internal dependencies
+ */
 import SVGIconBottom from './images/bottom.svg'
 import SVGIconCenter from './images/center.svg'
 import SVGIconTop from './images/top.svg'
+
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n'
+import { compose } from '@wordpress/compose'
+
+/**
+ * External dependencies
+ */
+import { find } from 'lodash'
+import { i18n } from 'stackable'
 import { Toolbar } from '@wordpress/components'
 import { withSelect } from '@wordpress/data'
 import { withViewportMatch } from '@wordpress/viewport'
@@ -67,7 +79,8 @@ export default compose(
 	withSelect( ( select, {
 		clientId, isLargeViewport, isCollapsed,
 	} ) => {
-		const { getBlockRootClientId, getEditorSettings } = select( 'core/editor' )
+		const { getEditorSettings } = select( 'core/editor' )
+		const { getBlockRootClientId } = select( 'core/block-editor' )
 		return {
 			isCollapsed: isCollapsed || ! isLargeViewport || (
 				! getEditorSettings().hasFixedToolbar &&

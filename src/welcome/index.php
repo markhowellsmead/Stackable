@@ -43,6 +43,9 @@ SVG;
             if ( 'toplevel_page_stackable' === $hook ) {
 				wp_enqueue_style( 'stackable-welcome', plugins_url( 'dist/admin_welcome.css', STACKABLE_FILE ), array() );
 
+				// Add translations.
+				wp_set_script_translations( 'stackable-welcome', STACKABLE_I18N );
+
 				wp_enqueue_script( 'wp-i18n' );
 				wp_enqueue_script( 'wp-element' );
 				wp_enqueue_script( 'wp-hooks' );
@@ -51,9 +54,6 @@ SVG;
 				wp_enqueue_style( 'wp-components' ); // Need Spinner.
 
 				wp_enqueue_script( 'stackable-welcome', plugins_url( 'dist/admin_welcome.js', STACKABLE_FILE ), array( 'wp-i18n', 'wp-element', 'wp-hooks', 'wp-util', 'wp-components' ) );
-
-				// Add translations.
-				wp_set_script_translations( 'stackable-welcome', STACKABLE_I18N );
 
 				wp_localize_script( 'stackable-welcome', 'stackable', array(
 					'srcUrl' => untrailingslashit( plugins_url( '/', STACKABLE_FILE ) ),
@@ -69,6 +69,8 @@ SVG;
 					'showProNoticesOption' => stackable_show_pro_notices_option(),
 					'nonceProNotice' => stackable_show_pro_notices_option_nonce(),
 					'nonceNews' => stackable_get_news_feed_nonce(),
+					'loadV1Styles' => stackable_should_load_v1_styles(),
+					'nonceLoadV1Styles' => stackable_load_v1_styles_nonce(),
 				) );
             }
         }
@@ -110,6 +112,7 @@ SVG;
 							<!-- We put all the block controls here. -->
                             <div class="s-settings-wrapper" />
 						</article>
+						<aside class="s-backward-compatibility-control-wrapper"></aside>
 						<?php if ( STACKABLE_SHOW_PRO_NOTICES && ! sugb_fs()->can_use_premium_code() ): ?>
 							<aside class="s-pro-control-wrapper"></aside>
 						<?php endif; ?>

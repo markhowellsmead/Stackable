@@ -1,73 +1,98 @@
 /**
  * BLOCK: Number Box Block.
  */
+/**
+ * External dependencies
+ */
+import {
+	createAllCombinationAttributes,
+	createBackgroundAttributes,
+	createResponsiveAttributes,
+	createTypographyAttributes,
+	descriptionPlaceholder,
+} from '~stackable/util'
+import { NumberBoxIcon } from '~stackable/icons'
 
-import { disabledBlocks, i18n } from 'stackable'
+/**
+ * Internal dependencies
+ */
+import './design'
+import deprecated from './deprecated'
+import edit from './edit'
+import save from './save'
+
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n'
-import { descriptionPlaceholder } from '@stackable/util'
-import { NumberBoxIcon } from '@stackable/icons'
+import { applyFilters } from '@wordpress/hooks'
+import { disabledBlocks, i18n } from 'stackable'
 
 export const schema = {
 	num1: {
 		source: 'html',
-		selector: '.ugb-number-box__item:nth-of-type(1) .ugb-number-box__number',
+		selector: '.ugb-number-box__item1 .ugb-number-box__number',
 		default: '01',
 	},
 	num2: {
 		source: 'html',
-		selector: '.ugb-number-box__item:nth-of-type(2) .ugb-number-box__number',
+		selector: '.ugb-number-box__item2 .ugb-number-box__number',
 		default: '02',
 	},
 	num3: {
 		source: 'html',
-		selector: '.ugb-number-box__item:nth-of-type(3) .ugb-number-box__number',
+		selector: '.ugb-number-box__item3 .ugb-number-box__number',
 		default: '03',
 	},
 	title1: {
 		source: 'html',
-		selector: '.ugb-number-box__item:nth-of-type(1) .ugb-number-box__title',
+		selector: '.ugb-number-box__item1 .ugb-number-box__title',
 		default: __( 'Title', i18n ),
 	},
 	title2: {
 		source: 'html',
-		selector: '.ugb-number-box__item:nth-of-type(2) .ugb-number-box__title',
+		selector: '.ugb-number-box__item2 .ugb-number-box__title',
 		default: __( 'Title', i18n ),
 	},
 	title3: {
 		source: 'html',
-		selector: '.ugb-number-box__item:nth-of-type(3) .ugb-number-box__title',
+		selector: '.ugb-number-box__item3 .ugb-number-box__title',
 		default: __( 'Title', i18n ),
 	},
 	description1: {
 		source: 'html',
-		selector: '.ugb-number-box__item:nth-of-type(1) .ugb-number-box__description',
+		selector: '.ugb-number-box__item1 .ugb-number-box__description',
 		default: descriptionPlaceholder(),
 	},
 	description2: {
 		source: 'html',
-		selector: '.ugb-number-box__item:nth-of-type(2) .ugb-number-box__description',
+		selector: '.ugb-number-box__item2 .ugb-number-box__description',
 		default: descriptionPlaceholder(),
 	},
 	description3: {
 		source: 'html',
-		selector: '.ugb-number-box__item:nth-of-type(3) .ugb-number-box__description',
+		selector: '.ugb-number-box__item3 .ugb-number-box__description',
 		default: descriptionPlaceholder(),
 	},
 	numberColor: {
 		type: 'string',
+		default: '',
 	},
 	numberBGColor: {
 		type: 'string',
+		default: '',
 	},
 	titleColor: {
 		type: 'string',
+		default: '',
 	},
 	descriptionColor: {
 		type: 'string',
+		default: '',
 	},
 	columns: {
 		type: 'number',
-		default: 3,
+		default: 2,
 	},
 	design: {
 		type: 'string',
@@ -75,31 +100,88 @@ export const schema = {
 	},
 	borderRadius: {
 		type: 'number',
-		default: 12,
+		default: '',
 	},
 	shadow: {
 		type: 'number',
-		default: 3,
+		default: '',
 	},
+
+	...createAllCombinationAttributes(
+		'%s%sAlign', {
+			type: 'string',
+			default: '',
+		},
+		[ 'Number', 'Title', 'Description' ],
+		[ '', 'Tablet', 'Mobile' ]
+	),
+
+	// Column.
+	...createBackgroundAttributes( 'column%s' ),
+
+	// Number attributes.
+	showNumber: {
+		type: 'boolean',
+		default: true,
+	},
+	numberStyle: {
+		type: 'string',
+		default: '',
+	},
+	numberOpacity: {
+		type: 'number',
+		default: '',
+	},
+	...createTypographyAttributes( 'number%s' ),
+	...createResponsiveAttributes( 'number%sPadding', {
+		type: 'number',
+		default: '',
+	} ),
+	...createResponsiveAttributes( 'number%sBottomMargin', {
+		type: 'number',
+		default: '',
+	} ),
+
+	// Title attributes.
+	showTitle: {
+		type: 'boolean',
+		default: true,
+	},
+	titleTag: {
+		type: 'string',
+		defualt: '',
+	},
+	...createResponsiveAttributes( 'title%sBottomMargin', {
+		type: 'number',
+		default: '',
+	} ),
+	...createTypographyAttributes( 'title%s' ),
+
+	// Description attributes.
+	showDescription: {
+		type: 'boolean',
+		default: true,
+	},
+	...createResponsiveAttributes( 'description%sBottomMargin', {
+		type: 'number',
+		default: '',
+	} ),
+	...createTypographyAttributes( 'description%s' ),
+
+	// Individual column colors.
+	...createAllCombinationAttributes(
+		'Column%s%sColor', {
+			type: 'string',
+			default: '',
+		},
+		[ '1', '2', '3' ],
+		[ 'Background', 'NumberBackground' ]
+	),
+
+	// Keep the old attributes. Gutenberg issue https://github.com/WordPress/gutenberg/issues/10406
 	backgroundColor: {
 		type: 'string',
 	},
-
-	// Custom CSS attributes.
-	customCSSUniqueID: {
-		type: 'string',
-		default: '',
-	},
-	customCSS: {
-		type: 'string',
-		default: '',
-	},
-	customCSSCompiled: {
-		type: 'string',
-		default: '',
-	},
-
-	// Keep the old attributes. Gutenberg issue https://github.com/WordPress/gutenberg/issues/10406
 	numberBox: {
 		type: 'string',
 	},
@@ -151,6 +233,28 @@ export const settings = {
 	],
 	attributes: schema,
 	supports: {
+		align: [ 'center', 'wide', 'full' ],
 		inserter: ! disabledBlocks.includes( name ), // Hide if disabled.
+	},
+	deprecated,
+	save,
+	edit,
+
+	// Stackable modules.
+	modules: {
+		'advanced-general': true,
+		'advanced-block-spacing': true,
+		'advanced-column-spacing': {
+			verticalColumnAlign: true,
+		},
+		'advanced-responsive': true,
+		'block-background': true,
+		'block-separators': true,
+		'block-title': true,
+		'content-align': true,
+		'block-designs': true,
+		'custom-css': {
+			default: applyFilters( 'stackable.number-box.custom-css.default', '' ),
+		},
 	},
 }

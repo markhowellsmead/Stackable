@@ -4,23 +4,12 @@
  * Enqueued in the editor only.
  */
 
-// Remove border radius on full width.
-[data-align="full"] div.ugb-cta {
-	border-radius: 0 !important;
-}
-
-[data-type="ugb/cta"] {
-	[data-is-placeholder-visible="true"] + .editor-rich-text__editable {
-		opacity: 0.5;
-	}
-
-	// Only show placeholder text while selected or typing.
-	&:not(.is-selected):not(.is-typing) {
-		[data-is-placeholder-visible="true"] + .editor-rich-text__editable {
-			display: none;
-		}
-		[data-is-placeholder-visible="true"] {
-			display: none;
-		}
+// Contents go full-width when full-width.
+[data-type][data-align="full"] .ugb-cta.ugb-main-block:not(.ugb--has-block-background),
+// Contents go full-width when full-width with block background.
+[data-type][data-align="full"] .ugb-cta.ugb-main-block.ugb-main-block--inner-full.ugb--has-block-background {
+	padding: 0;
+	.ugb-cta__item {
+		border-radius: 0;
 	}
 }

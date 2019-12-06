@@ -1,5 +1,6 @@
-import { cloneElement, render } from '@wordpress/element'
-import domReady from '@wordpress/dom-ready'
+/**
+ * Internal dependencies
+ */
 import StackableIcon from './images/stackable-icon.svg'
 import SVGAccordionIcon from './images/accordion-icon.svg'
 import SVGBlockquoteIcon from './images/blockquote-icon.svg'
@@ -24,6 +25,13 @@ import SVGSpacerIcon from './images/spacer-icon.svg'
 import SVGTeamMemberIcon from './images/team-member-icon.svg'
 import SVGTestimonialIcon from './images/testimonial-icon.svg'
 import SVGVideoPopupIcon from './images/video-popup-icon.svg'
+import SVGUngroupContainerIcon from './images/ungroup-container-icon.svg'
+
+/**
+ * WordPress dependencies
+ */
+import { cloneElement, render } from '@wordpress/element'
+import domReady from '@wordpress/dom-ready'
 import { updateCategory } from '@wordpress/blocks'
 
 export const colorizeIcon = SvgIcon => {
@@ -152,6 +160,10 @@ export const TestimonialIcon = () => {
 
 export const VideoPopupIcon = () => {
 	return colorizeIcon( <SVGVideoPopupIcon width="20" height="20" /> )
+}
+
+export const UngroupContainerIcon = () => {
+	return colorizeIcon( <SVGUngroupContainerIcon width="20" height="20" /> )
 }
 
 export const GhostButtonIcon = () => <ButtonIcon />

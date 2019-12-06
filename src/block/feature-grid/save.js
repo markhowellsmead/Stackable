@@ -1,109 +1,132 @@
-import { applyFilters } from '@wordpress/hooks'
-import { ButtonEdit } from '@stackable/components'
+/**
+ * Internal dependencies
+ */
+import createStyles from './style'
+import { showOptions } from './util'
+
+/**
+ * External dependencies
+ */
+import {
+	ButtonEditHelper, BlockContainer, Image, DivBackground,
+} from '~stackable/components'
+import { withUniqueClass, withBlockStyles } from '~stackable/higher-order'
 import classnames from 'classnames'
-import { range } from '@stackable/util'
+import { range } from 'lodash'
+
+/**
+ * WordPress dependencies
+ */
+import { applyFilters } from '@wordpress/hooks'
 import { RichText } from '@wordpress/block-editor'
-import striptags from 'striptags'
+import { Fragment } from '@wordpress/element'
+import { compose } from '@wordpress/compose'
 
 const save = props => {
 	const { attributes, className } = props
+
 	const {
-		columns,
-		imageSize,
-		design,
-		buttonColor,
-		buttonTextColor,
-		buttonSize,
-		buttonBorderRadius,
-		buttonDesign = 'link',
-		buttonIcon,
-		borderRadius = 12,
-		shadow = 3,
+		design = 'basic',
+		columns = 3,
+		imageShape = '',
+		imageShapeStretch = false,
+		imageWidth = '',
+		imageShadow = '',
+		titleTag = '',
+		shadow = '',
+		showImage = true,
+		showTitle = true,
+		showDescription = true,
+		showButton = true,
+		buttonIcon = '',
 	} = attributes
 
 	const mainClasses = classnames( [
 		className,
-		'ugb-feature-grid',
+		`ugb-feature-grid--v2`,
 		`ugb-feature-grid--columns-${ columns }`,
+		`ugb-feature-grid--design-${ design }`,
 	], applyFilters( 'stackable.feature-grid.mainclasses', {
-		[ `ugb-feature-grid--design-${ design }` ]: design && design !== 'basic',
-	}, design, props ) )
+	}, props ) )
 
-	const itemStyle = {
-		borderRadius: design !== 'plain' && borderRadius !== 12 ? borderRadius : undefined,
-	}
+	const show = showOptions( props )
 
 	return (
-		<div className={ mainClasses }>
-			{ applyFilters( 'stackable.feature-grid.edit.output.before', null, design, props ) }
-			{ range( 1, columns + 1 ).map( i => {
-				const imageUrl = attributes[ `imageUrl${ i }` ]
-				const imageAlt = attributes[ `imageAlt${ i }` ]
-				const title = attributes[ `title${ i }` ]
-				const description = attributes[ `description${ i }` ]
-				const linkUrl = attributes[ `linkUrl${ i }` ]
-				const newTab = attributes[ `newTab${ i }` ]
-				const linkText = attributes[ `linkText${ i }` ]
+		<BlockContainer.Save className={ mainClasses } blockProps={ props } render={ () => (
+			<Fragment>
+				{ range( 1, columns + 1 ).map( i => {
+					const imageUrl = attributes[ `image${ i }Url` ]
+					const imageId = attributes[ `image${ i }Id` ]
+					const imageAlt = attributes[ `image${ i }Alt` ]
+					const title = attributes[ `title${ i }` ]
+					const description = attributes[ `description${ i }` ]
+					const buttonText = attributes[ `button${ i }Text` ]
 
-				const itemClasses = classnames( [
-					'ugb-feature-grid__item',
-				], applyFilters( 'stackable.feature-grid.itemclasses', {
-					[ `ugb--shadow-${ shadow }` ]: design !== 'plain' && shadow !== 3,
-				}, design, i, props ) )
+					const itemClasses = classnames( [
+						'ugb-feature-grid__item',
+						`ugb-feature-grid__item${ i }`,
+					], applyFilters( 'stackable.feature-grid.itemclasses', {
+						[ `ugb--shadow-${ shadow }` ]: show.columnBackground && shadow !== '',
+					}, props, i ) )
 
-				const itemStyles = applyFilters( 'stackable.feature-grid.itemstyles', {
-					image: {
-						width: imageUrl ? `${ imageSize }%` : undefined,
-					},
-				}, design, i, props )
-
-				return (
-					<div className={ itemClasses } style={ itemStyle } key={ i }>
-						{ imageUrl &&
-							<div className="ugb-feature-grid__image">
-								<img
-									src={ imageUrl }
-									style={ itemStyles.image }
-									alt={ striptags( title ? title : imageAlt ) }
-								/>
+					return (
+						<DivBackground
+							className={ itemClasses }
+							backgroundAttrName="column%s"
+							blockProps={ props }
+							showBackground={ show.columnBackground && show[ `columnBackground${ i }` ] }
+							key={ i }
+						>
+							{ imageUrl && showImage &&
+								<div className="ugb-feature-grid__image">
+									<Image
+										imageId={ imageId }
+										src={ imageUrl }
+										width={ imageWidth }
+										alt={ imageAlt || ( showTitle && title ) }
+										shadow={ imageShadow }
+										shape={ attributes[ `image${ i }Shape` ] || imageShape }
+										shapeStretch={ attributes[ `image${ i }ShapeStretch` ] || imageShapeStretch }
+									/>
+								</div>
+							}
+							<div className="ugb-feature-grid__content">
+								{ showTitle && ! RichText.isEmpty( title ) &&
+									<RichText.Content
+										tagName={ titleTag || 'h5' }
+										className="ugb-feature-grid__title"
+										value={ title }
+									/>
+								}
+								{ showDescription && ! RichText.isEmpty( description ) &&
+									<RichText.Content
+										tagName="p"
+										className="ugb-feature-grid__description"
+										value={ description }
+									/>
+								}
+								{ showButton && !! buttonText.length &&
+									<ButtonEditHelper.Content
+										attrNameTemplate={ `button%s` }
+										blockAttributes={ props.attributes }
+										designDefault="plain"
+										text={ buttonText }
+										icon={ attributes[ `button${ i }Icon` ] || buttonIcon }
+										url={ attributes[ `button${ i }Url` ] }
+										newTab={ attributes[ `button${ i }NewTab` ] }
+										noFollow={ attributes[ `button${ i }NoFollow` ] }
+									/>
+								}
 							</div>
-						}
-						<div className="ugb-feature-grid__content">
-							{ ! RichText.isEmpty( title ) && (
-								<RichText.Content
-									tagName="h5"
-									className="ugb-feature-grid__title"
-									value={ title }
-								/>
-							) }
-							{ ! RichText.isEmpty( description ) && (
-								<RichText.Content
-									tagName="p"
-									className="ugb-feature-grid__description"
-									value={ description }
-								/>
-							) }
-							{ ! RichText.isEmpty( linkText ) && (
-								<ButtonEdit.Content
-									size={ buttonSize }
-									url={ linkUrl }
-									newTab={ newTab }
-									// align={ contentAlign }
-									color={ buttonTextColor }
-									text={ linkText }
-									icon={ buttonIcon }
-									design={ buttonDesign }
-									backgroundColor={ buttonColor }
-									borderRadius={ buttonBorderRadius }
-								/>
-							) }
-						</div>
-					</div>
-				)
-			} ) }
-			{ applyFilters( 'stackable.feature-grid.edit.output.after', null, design, props ) }
-		</div>
+						</DivBackground>
+					)
+				} ) }
+			</Fragment>
+		) } />
 	)
 }
 
-export default save
+export default compose(
+	withUniqueClass,
+	withBlockStyles( createStyles ),
+)( save )

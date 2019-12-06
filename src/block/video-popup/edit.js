@@ -1,178 +1,275 @@
+/**
+ * External dependencies
+ */
 import {
-	ColorPaletteControl, DesignPanelBody, PanelBackgroundSettings, ProControl, ProControlButton, URLInputControl,
-} from '@stackable/components'
-import { getPlayButton, playButtonTypes } from './util'
-import { i18n, showProNotice } from 'stackable'
-import { PanelBody, RangeControl, SelectControl } from '@wordpress/components'
-import { __ } from '@wordpress/i18n'
-import { applyFilters } from '@wordpress/hooks'
-import classnames from 'classnames'
-import { Fragment } from '@wordpress/element'
-import { getVideoProviderFromURL } from '@stackable/util'
-import { InspectorControls } from '@wordpress/block-editor'
+	AdvancedRangeControl,
+	BackgroundControlsHelper,
+	BlockContainer,
+	ColorPaletteControl,
+	ImageControl,
+	PanelSpacingBody,
+	ResponsiveControl,
+	WhenResponsiveScreen,
+	DivBackground,
+} from '~stackable/components'
+import {
+	getVideoProviderFromURL,
+	urlIsVideo,
+} from '~stackable/util'
 
-const edit = props => {
+/**
+ * Internal dependencies
+ */
+import {
+	getPlayButton, playButtonTypes, showOptions,
+} from './util'
+import {
+	withBlockStyles,
+	withGoogleFont,
+	withSetAttributeHook,
+	withTabbedInspector,
+	withUniqueClass,
+} from '~stackable/higher-order'
+import createStyles from './style'
+
+/**
+ * WordPress dependencies
+ */
+import { addFilter, applyFilters } from '@wordpress/hooks'
+
+import {
+	PanelBody, SelectControl, TextControl,
+} from '@wordpress/components'
+import { __ } from '@wordpress/i18n'
+import classnames from 'classnames'
+import { compose } from '@wordpress/compose'
+import { Fragment } from '@wordpress/element'
+import { i18n } from 'stackable'
+
+addFilter( 'stackable.video-popup.edit.inspector.style.before', 'stackable/video-popup', ( output, props ) => {
+	const { setAttributes } = props
 	const {
-		className,
-		setAttributes,
-		isSelected,
-	} = props
-	const {
-		videoLink,
-		backgroundImageID,
-		backgroundImageURL,
-		backgroundColorType = '',
-		backgroundColor,
-		backgroundColor2,
-		backgroundColorDirection = 0,
-		backgroundType = '',
+		borderRadius = '',
+		shadow = '',
+		videoLink = '',
+		videoID = '',
 		playButtonType,
 		playButtonColor = '#ffffff',
-		backgroundOpacity,
-		design = 'basic',
-		borderRadius = 12,
-		shadow = 3,
+		playButtonOpacity = '',
+		width = '',
+		tabletWidth = '',
+		mobileWidth = '',
+		showBlockTitle = false,
+		showBlockDescription = false,
 	} = props.attributes
 
-	const mainClasses = classnames( [
-		className,
-		'ugb-video-popup',
-		'ugb-video-popup--v2',
-		`ugb-video-popup--design-${ design }`,
-		`ugb-video-popup--button-${ playButtonType }`,
-		'ugb--background-opacity-' + ( 1 * Math.round( backgroundOpacity / 1 ) ),
-	], applyFilters( 'stackable.video-popup.mainclasses', {
-		'ugb--has-background': backgroundColor || backgroundImageURL,
-		'ugb--has-background-image': backgroundImageURL,
-		[ `ugb--shadow-${ shadow }` ]: design !== 'plain' && shadow !== 3,
-		[ `ugb--has-background-gradient` ]: backgroundColorType === 'gradient',
-		[ `ugb--has-background-video` ]: backgroundType === 'video',
-	}, design, props ) )
-
-	const mainStyle = {
-		backgroundColor: backgroundColor ? backgroundColor : undefined,
-		backgroundImage: backgroundImageURL ? `url(${ backgroundImageURL })` : undefined,
-		'--ugb-background-color': backgroundImageURL || backgroundColorType === 'gradient' ? backgroundColor : undefined,
-		'--ugb-background-color2': backgroundColorType === 'gradient' && backgroundColor2 ? backgroundColor2 : undefined,
-		'--ugb-background-direction': backgroundColorType === 'gradient' ? `${ backgroundColorDirection }deg` : undefined,
-		borderRadius: design !== 'plain' && borderRadius !== 12 ? borderRadius : undefined,
-	}
+	const show = showOptions( props )
 
 	return (
 		<Fragment>
-			<InspectorControls>
-				<DesignPanelBody
-					initialOpen={ true }
-					selected={ design }
-					options={ [ ...applyFilters( 'stackable.video-popup.edit.designs', [] ) ] }
-					onChange={ design => {
-						setAttributes( { design } )
+			{ output }
+			<PanelBody title={ __( 'General', i18n ) }>
+				<ImageControl
+					label={ __( 'Popup Option #1: Upload Video', i18n ) }
+					help={ __( 'Use .mp4 format for videos', i18n ) }
+					onRemove={ () => setAttributes( {
+						videoLink: '',
+						videoID: '',
+					} ) }
+					onChange={ media => {
+						setAttributes( {
+							videoLink: media.url,
+							videoID: media.url,
+						} )
 					} }
+					imageID={ urlIsVideo( videoLink ) ? videoID : '' }
+					imageURL={ urlIsVideo( videoLink ) ? videoLink : '' }
+					allowedTypes={ [ 'video' ] }
+				/>
+				<TextControl
+					label={ __( 'Popup Option #2: Video URL', i18n ) }
+					help={ __( 'Paste a Youtube / Vimeo URL', i18n ) }
+					placeholder="https://"
+					value={ ! urlIsVideo( videoLink ) ? videoLink : '' }
+					onChange={ videoLink => setAttributes( {
+						videoLink,
+						videoID: getVideoProviderFromURL( videoLink ).id,
+					} ) }
+					min={ 1 }
+					max={ 4 }
+				/>
+			</PanelBody>
+
+			<PanelBody title={ __( 'Container', i18n ) } initialOpen={ false }>
+				{ show.containerWidth &&
+					<Fragment>
+						<WhenResponsiveScreen screen="desktop">
+							<AdvancedRangeControl
+								label={ __( 'Width', i18n ) }
+								value={ width }
+								min="200"
+								max="2000"
+								allowReset={ true }
+								onChange={ width => props.setAttributes( { width } ) }
+							/>
+						</WhenResponsiveScreen>
+						<WhenResponsiveScreen screen="tablet">
+							<AdvancedRangeControl
+								label={ __( 'Width', i18n ) }
+								value={ tabletWidth }
+								min="200"
+								max="1000"
+								allowReset={ true }
+								onChange={ tabletWidth => props.setAttributes( { tabletWidth } ) }
+							/>
+						</WhenResponsiveScreen>
+						<WhenResponsiveScreen screen="mobile">
+							<AdvancedRangeControl
+								label={ __( 'Width', i18n ) }
+								value={ mobileWidth }
+								min="200"
+								max="700"
+								allowReset={ true }
+								onChange={ mobileWidth => props.setAttributes( { mobileWidth } ) }
+							/>
+						</WhenResponsiveScreen>
+					</Fragment>
+				}
+				<ResponsiveControl
+					attrNameTemplate="%sHeight"
+					setAttributes={ setAttributes }
+					blockAttributes={ props.attributes }
 				>
-					{ applyFilters( 'stackable.video-popup.edit.designs.before', null, props ) }
-					<RangeControl
+					<AdvancedRangeControl
+						label={ __( 'Height', i18n ) }
+						min={ 100 }
+						max={ 1000 }
+						allowReset={ true }
+						placeholder="400"
+					/>
+				</ResponsiveControl>
+				{ show.borderRadius &&
+					<AdvancedRangeControl
 						label={ __( 'Border Radius', i18n ) }
 						value={ borderRadius }
 						onChange={ borderRadius => setAttributes( { borderRadius } ) }
 						min={ 0 }
 						max={ 50 }
+						allowReset={ true }
+						placeholder="12"
 					/>
-					<RangeControl
-						label={ __( 'Shadow / Outline', i18n ) }
-						value={ shadow }
-						onChange={ shadow => setAttributes( { shadow } ) }
-						min={ 0 }
-						max={ 9 }
-					/>
-					{ applyFilters( 'stackable.video-popup.edit.designs.after', null, props ) }
-					{ showProNotice && <ProControlButton /> }
-				</DesignPanelBody>
-				<PanelBody title={ __( 'General Settings', i18n ) }>
-					<SelectControl
-						label={ __( 'Play Button Style', i18n ) }
-						value={ playButtonType }
-						options={ playButtonTypes.map( ( { value, label } ) => ( {
-							value: value,
-							label: label,
-						} ) ) }
-						onChange={ newSize => {
-							setAttributes( { playButtonType: newSize } )
-						} }
-					/>
-					<ColorPaletteControl
-						label={ __( 'Play Button Color', i18n ) }
-						value={ playButtonColor }
-						onChange={ playButtonColor => setAttributes( { playButtonColor } ) }
-					/>
-				</PanelBody>
-				<PanelBackgroundSettings
-					initialOpen={ true }
-					backgroundColorType={ backgroundColorType }
-					backgroundColor={ backgroundColor }
-					backgroundColor2={ backgroundColor2 }
-					backgroundColorDirection={ backgroundColorDirection }
-					backgroundType={ backgroundType }
-					backgroundImageID={ backgroundImageID }
-					backgroundImageURL={ backgroundImageURL }
-					backgroundOpacity={ backgroundOpacity }
-					onChangeBackgroundColorType={ backgroundColorType => setAttributes( { backgroundColorType } ) }
-					onChangeBackgroundColor={ backgroundColor => setAttributes( { backgroundColor } ) }
-					onChangeBackgroundColor2={ backgroundColor2 => setAttributes( { backgroundColor2 } ) }
-					onChangeBackgroundColorDirection={ backgroundColorDirection => setAttributes( { backgroundColorDirection } ) }
-					onChangeBackgroundType={ backgroundType => setAttributes( { backgroundType } ) }
-					onChangeBackgroundImage={ ( { url, id } ) => setAttributes( { backgroundImageURL: url, backgroundImageID: id } ) }
-					onRemoveBackgroundImage={ () => {
-						setAttributes( { backgroundImageURL: '', backgroundImageID: 0 } )
-					} }
-					onChangeBackgroundOpacity={ backgroundOpacity => setAttributes( { backgroundOpacity } ) }
-				/>
-				{ showProNotice &&
-					<PanelBody
-						initialOpen={ false }
-						title={ __( 'Custom CSS', i18n ) }
-					>
-						<ProControl
-							title={ __( 'Say Hello to Custom CSS 👋', i18n ) }
-							description={ __( 'Further tweak this block by adding guided custom CSS rules. This feature is only available on Stackable Premium', i18n ) }
-						/>
-					</PanelBody>
 				}
-				{ applyFilters( 'stackable.video-popup.edit.inspector.after', null, design, props ) }
-			</InspectorControls>
-			<div className={ mainClasses } style={ mainStyle }>
-				{ backgroundType === 'video' && (
-					<video
-						className="ugb-video-background"
-						autoPlay
-						muted
-						loop
-						src={ backgroundImageURL }
+				<AdvancedRangeControl
+					label={ __( 'Shadow / Outline', i18n ) }
+					value={ shadow }
+					onChange={ shadow => setAttributes( { shadow } ) }
+					min={ 0 }
+					max={ 9 }
+					allowReset={ true }
+					placeholder="3"
+				/>
+			</PanelBody>
+
+			<PanelBody title={ __( 'Background', i18n ) } initialOpen={ false }>
+				<BackgroundControlsHelper
+					attrNameTemplate="preview%s"
+					setAttributes={ setAttributes }
+					blockAttributes={ props.attributes }
+				/>
+			</PanelBody>
+
+			<PanelBody title={ __( 'Play Button', i18n ) } initialOpen={ false }>
+				<SelectControl
+					label={ __( 'Button Style', i18n ) }
+					value={ playButtonType }
+					options={ playButtonTypes.map( ( { value, label } ) => ( {
+						value,
+						label,
+					} ) ) }
+					onChange={ newSize => {
+						setAttributes( { playButtonType: newSize } )
+					} }
+				/>
+				<ResponsiveControl
+					attrNameTemplate="%sPlayButtonSize"
+					setAttributes={ setAttributes }
+					blockAttributes={ props.attributes }
+				>
+					<AdvancedRangeControl
+						label={ __( 'Size', i18n ) }
+						min={ 10 }
+						max={ 200 }
+						allowReset={ true }
+						placeholder="40"
 					/>
-				) }
-				{ applyFilters( 'stackable.video-popup.edit.output.before', null, design, props ) }
-				<div className="ugb-video-popup__wrapper" >
-					<span className="ugb-video-popup__play-button">
-						{ getPlayButton( playButtonType, playButtonColor ) }
-					</span>
-				</div>
-				{ applyFilters( 'stackable.video-popup.edit.output.after', null, design, props ) }
-			</div>
-			{ isSelected && (
-				<div>
-					<URLInputControl
-						value={ videoLink }
-						onChange={ value => {
-							setAttributes( {
-								videoLink: value,
-								videoID: getVideoProviderFromURL( value ).id,
-							} )
-						} }
-					/>
-					<p className="ugb-video-popup__link-description"><i>{ __( 'Youtube / Vimeo only', i18n ) }</i></p>
-				</div>
-			) }
+				</ResponsiveControl>
+				<ColorPaletteControl
+					label={ __( 'Color', i18n ) }
+					value={ playButtonColor }
+					onChange={ playButtonColor => setAttributes( { playButtonColor } ) }
+				/>
+				<AdvancedRangeControl
+					label={ __( 'Opacity', i18n ) }
+					min={ 0 }
+					max={ 1 }
+					step={ 0.1 }
+					value={ playButtonOpacity }
+					onChange={ playButtonOpacity => setAttributes( { playButtonOpacity } ) }
+					allowReset={ true }
+					placeholder="1.0"
+				/>
+			</PanelBody>
+
+			{ ( showBlockTitle || showBlockDescription ) &&
+				<PanelSpacingBody initialOpen={ false } blockProps={ props }>
+				</PanelSpacingBody>
+			}
 		</Fragment>
+	)
+} )
+
+const edit = props => {
+	const {
+		className,
+	} = props
+	const {
+		playButtonType,
+		shadow = '',
+	} = props.attributes
+
+	const mainClasses = classnames( [
+		className,
+		'ugb-video-popup--v3',
+	], applyFilters( 'stackable.video-popup.mainclasses', {
+	}, props ) )
+
+	const boxClasses = classnames( [
+		'ugb-video-popup__wrapper',
+	], applyFilters( 'stackable.video-popup.boxclasses', {
+		[ `ugb--shadow-${ shadow }` ]: shadow !== '',
+	}, props ) )
+
+	return (
+		<BlockContainer.Edit className={ mainClasses } blockProps={ props } render={ () => (
+			<Fragment>
+				<DivBackground
+					className={ boxClasses }
+					backgroundAttrName="preview%s"
+					blockProps={ props }
+				>
+					<span className="ugb-video-popup__play-button">
+						{ getPlayButton( playButtonType ) }
+					</span>
+				</DivBackground>
+			</Fragment>
+		) } />
 	)
 }
 
-export default edit
+export default compose(
+	withUniqueClass,
+	withSetAttributeHook,
+	withGoogleFont,
+	withTabbedInspector(),
+	withBlockStyles( createStyles, { editorMode: true } ),
+)( edit )

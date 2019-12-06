@@ -1,5 +1,16 @@
-import { BaseControl, SelectControl } from '@wordpress/components'
+/**
+ * Internal dependencies
+ */
 import BaseControlMultiLabel from '../base-control-multi-label'
+
+/**
+ * WordPress dependencies
+ */
+import { BaseControl, SelectControl } from '@wordpress/components'
+
+/**
+ * External dependencies
+ */
 import classnames from 'classnames'
 import { omit } from 'lodash'
 
@@ -26,6 +37,11 @@ const AdvancedSelectControl = props => {
 AdvancedSelectControl.defaultProps = {
 	onChange: () => {},
 	onChangeUnit: () => {},
+	help: '',
+	className: '',
+	units: [ 'px' ],
+	unit: 'px',
+	screens: [ 'desktop' ],
 }
 
 export default AdvancedSelectControl

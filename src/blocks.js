@@ -1,43 +1,28 @@
 /**
- * Register all the blocks found.
- *
  * This is the file that Webpack is compiling into editor_blocks.js
  */
 /**
  * Internal dependencies
  */
 import './fontawesome'
-import './icons'
 import './format-types'
+import './plugins'
 
 /**
- * WordPress dependencies
+ * External dependencies
  */
-import { registerBlockType } from '@wordpress/blocks'
+import registerBlock from '~stackable/register-block'
 
-const context = require.context( './block', true, /index\.js$/ )
-const editContext = require.context( './block', true, /edit\.js$/ )
-const saveContext = require.context( './block', true, /save\.js$/ )
-const deprecatedContext = require.context( './block', true, /deprecated\.js$/ )
+// Import all index.js and register all the blocks found (if name & settings are exported by the script)
+const importAllAndRegister = r => {
+	r.keys().forEach( key => {
+		const { name, settings } = r( key )
+		try {
+			return name && settings && registerBlock( name, settings )
+		} catch ( error ) {
+			console.error( `Could not register ${ name } block` ) // eslint-disable-line
+		}
+	} )
+}
 
-// Register all the blocks found.
-context.keys().forEach( key => {
-	const block = context( key )
-
-	const settings = {
-		...block.settings,
-	}
-	try {
-		settings.edit = editContext( key.replace( 'index.js', 'edit.js' ) ).default
-	} catch ( error ) {}
-	try {
-		settings.save = saveContext( key.replace( 'index.js', 'save.js' ) ).default
-	} catch ( error ) {}
-	try {
-		settings.deprecated = deprecatedContext( key.replace( 'index.js', 'deprecated.js' ) ).default
-	} catch ( error ) {}
-
-	if ( block.name ) {
-		registerBlockType( block.name, settings )
-	}
-} )
+importAllAndRegister( require.context( './block', true, /index\.js$/ ) )

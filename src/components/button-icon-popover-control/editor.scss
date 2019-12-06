@@ -1,0 +1,52 @@
+.ugb-button-icon-control {
+	.components-popover__content {
+		box-shadow: 0 5px 5px 0 rgba(18, 63, 82, 0.035), 0 0 0 1px rgba(176, 181, 193, 0.2), 0 5px 30px -10px rgba(18, 63, 82, 0.3);
+	}
+	.components-base-control__field {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	button {
+		display: flex;
+	}
+}
+// Make sure our popover is still below custom color pickers.
+.components-popover.ugb-button-icon-control__popover {
+	z-index: 100000;
+}
+.ugb-button-icon-control__popover .components-panel__body-title {
+	padding: 15px !important;
+	background: transparent !important;
+}
+
+.ugb-button-icon-control__wrapper {
+	display: flex;
+	align-items: center;
+	.ugb-button-icon-control__reset {
+		padding: 6px;
+		margin: 0 6px;
+		svg {
+			width: 14px;
+			height: 14px;
+		}
+	}
+	.ugb-button-icon-control__edit {
+		padding: 0 6px;
+		svg {
+			width: 18px;
+			height: 18px;
+			margin: 0;
+		}
+	}
+}
+// Toggle.
+.ugb-button-icon-control {
+	.components-toggle-control {
+		&,
+		.components-base-control__field,
+		.components-toggle-control__label {
+			margin-bottom: 0 !important;
+		}
+	}
+}

@@ -1,8 +1,15 @@
+/**
+ * External dependencies
+ */
 import BigPicture from 'bigpicture'
+
+/**
+ * WordPress dependencies
+ */
 import domReady from '@wordpress/dom-ready'
 
 domReady( () => {
-	const elems = document.querySelectorAll( '.ugb-video-popup' )
+	const elems = document.querySelectorAll( '.ugb-video-popup[data-video], .ugb-video-popup [data-video]' )
 	const openVideo = el => {
 		if ( BigPicture ) {
 			const videoID = el.getAttribute( 'data-video' )
@@ -23,6 +30,10 @@ domReady( () => {
 	elems.forEach( el => {
 		const a = el.querySelector( 'a' )
 		a.addEventListener( 'click', ev => {
+			ev.preventDefault()
+			openVideo( el )
+		} )
+		a.addEventListener( 'touchend', ev => {
 			ev.preventDefault()
 			openVideo( el )
 		} )

@@ -1,14 +1,24 @@
 /**
  * Checks whether adding the block, saving it then refreshing the editor renders the block valid & editable.
  * Checks whether adding the block, changing values, saving it then refreshing the editor renders the block valid & editable.
+ * TODO: Remove tests that use this!
  */
+/**
+ * External dependencies
+ */
+import { createAttributeValues, getDefaultAttributes } from '~stackable/test/helpers'
+import registerStackableBlock from '~stackable/register-block'
 
-import { createAttributeValues, getDefaultAttributes } from '@stackable/test/helpers'
+/**
+ * WordPress dependencies
+ */
 import {
 	createBlock,
 	getBlockTypes,
 	getSaveContent,
+	parse,
 	registerBlockType,
+	serialize,
 	unregisterBlockType,
 } from '@wordpress/blocks'
 import { createBlockWithFallback } from '@wordpress/blocks/build/api/parser'
@@ -37,21 +47,19 @@ const blockEditableAfterSaveTests = function( props ) {
 
 	beforeEach( () => {
 		if ( hasInnerBlocks ) {
+			const testBlockName = 'core/test-block'
 			const testBlockSettings = {
 				save: () => <div>Test Block</div>,
 				category: 'common',
 				title: 'Test Block',
 			}
-			registerBlockType( 'core/test-block', testBlockSettings )
+			registerBlockType( testBlockName, testBlockSettings )
 
-			const savedHTML = getSaveContent( {
-				...testBlockSettings,
-				name: 'core/test-block',
-			}, {} )
+			const savedHTML = serialize( createBlock( testBlockName, {} ) )
 
-			innerBlocks.push( createBlock( 'core/test-block' ) )
+			innerBlocks.push( createBlock( testBlockName ) )
 			innerBlocksFallbackArgs.push( {
-				blockName: 'core/test-block',
+				blockName: testBlockName,
 				innerHTML: savedHTML,
 				attrs: {},
 			} )
@@ -82,7 +90,8 @@ const blockEditableAfterSaveTests = function( props ) {
 			// innerBlocks
 		)
 
-		registerBlockType( name, blockSettings )
+		// registerBlockType( name, blockSettings )
+		registerStackableBlock( name, blockSettings )
 
 		const block = createBlockWithFallback( {
 			blockName: name,
@@ -104,25 +113,12 @@ const blockEditableAfterSaveTests = function( props ) {
 				...attributeValuesOverride,
 			}
 
-			const savedHTML = getSaveContent(
-				{
-					...settings,
-					category: 'common',
-					name,
-					save,
-				},
-				attributes,
-				// innerBlocks
-			)
+			// registerBlockType( name, blockSettings )
+			registerStackableBlock( name, blockSettings )
 
-			registerBlockType( name, blockSettings )
-
-			const block = createBlockWithFallback( {
-				blockName: name,
-				innerHTML: savedHTML,
-				attrs: attributes,
-				innerBlocks: innerBlocksFallbackArgs,
-			} )
+			const createdBlock = createBlock( name, attributes )
+			const savedHTML = serialize( createdBlock )
+			const block = parse( savedHTML )[ 0 ]
 
 			expect( block.name ).toEqual( name )
 			expect( block.isValid ).toBe( true )

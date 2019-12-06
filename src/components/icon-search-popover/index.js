@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import {
-	Button, PanelBody, Popover, TextControl,
+	Button, Popover, PanelBody, TextControl,
 } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import { withState } from '@wordpress/compose'

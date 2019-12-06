@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Number Box block Save render should match snapshot 1`] = `
+<div
+  class="ugb-number-box ugb-number-box--v3 ugb-number-box--columns-2 ugb-main-block"
+>
+  <div
+    class="ugb-inner-block"
+  >
+    <div
+      class="ugb-block-content"
+    >
+      <div
+        class="ugb-number-box__item ugb-number-box__item1"
+      >
+        <span
+          class="ugb-number-box__number"
+        >
+          <div>
+            01
+          </div>
+        </span>
+        <div
+          class="ugb-number-box__content"
+        >
+          <h4
+            class="ugb-number-box__title"
+          >
+            <div>
+              Title
+            </div>
+          </h4>
+          <p
+            class="ugb-number-box__description"
+          />
+          <div>
+            Description for this block. Use this space for describing your block. Any text will do.
+          </div>
+          <p />
+        </div>
+      </div>
+      <div
+        class="ugb-number-box__item ugb-number-box__item2"
+      >
+        <span
+          class="ugb-number-box__number"
+        >
+          <div>
+            02
+          </div>
+        </span>
+        <div
+          class="ugb-number-box__content"
+        >
+          <h4
+            class="ugb-number-box__title"
+          >
+            <div>
+              Title
+            </div>
+          </h4>
+          <p
+            class="ugb-number-box__description"
+          />
+          <div>
+            Description for this block. Use this space for describing your block. Any text will do.
+          </div>
+          <p />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Number Box block Save render should match snapshot with attributes 1`] = `
+<div
+  class="ugb-number-box ugb-number-box--v3 ugb-number-box--columns-1 ugb-number-box--design-wave-2 ugb-main-block"
+>
+  <div
+    class="ugb-inner-block"
+  >
+    <div
+      class="ugb-block-content"
+    >
+      <div
+        class="ugb-number-box__item ugb-number-box__item1 ugb--shadow-1 ugb--has-background-overlay"
+      />
+    </div>
+  </div>
+</div>
+`;

@@ -1,10 +1,26 @@
 /**
  * BLOCK: Video Popup Block.
  */
+/**
+ * External dependencies
+ */
+import { VideoPopupIcon } from '~stackable/icons'
+import { createBackgroundAttributes, createResponsiveAttributes } from '~stackable/util'
 
-import { disabledBlocks, i18n } from 'stackable'
+/**
+ * Internal dependencies
+ */
+import './design'
+import deprecated from './deprecated'
+import edit from './edit'
+import save from './save'
+
+/**
+ * WordPress dependencies
+ */
+import { applyFilters } from '@wordpress/hooks'
 import { __ } from '@wordpress/i18n'
-import { VideoPopupIcon } from '@stackable/icons'
+import { disabledBlocks, i18n } from 'stackable'
 
 export const schema = {
 	videoLink: {
@@ -13,90 +29,52 @@ export const schema = {
 	videoID: {
 		type: 'string',
 		source: 'attribute',
-		selector: 'div',
+		selector: '[data-video]',
 		attribute: 'data-video',
 	},
+
+	...createResponsiveAttributes( '%sWidth', {
+		type: 'number',
+		default: '',
+	} ),
+	...createResponsiveAttributes( '%sHeight', {
+		type: 'number',
+		default: '',
+	} ),
+	borderRadius: {
+		type: 'number',
+		default: '',
+	},
+	shadow: {
+		type: 'number',
+		default: '',
+	},
+
 	playButtonType: {
 		type: 'string',
 		default: 'normal',
 	},
 	playButtonColor: {
 		type: 'string',
-		default: '#ffffff',
 	},
-	backgroundColorType: {
-		type: 'string',
+	playButtonSize: {
+		type: 'number',
 		default: '',
 	},
-	backgroundColor: {
+	playButtonOpacity: {
+		type: 'number',
+		default: '',
+	},
+
+	...createBackgroundAttributes( 'preview%s' ),
+	previewBackgroundColor: {
 		type: 'string',
 		default: '#000000',
 	},
-	backgroundColor2: {
-		type: 'string',
-		default: '',
-	},
-	backgroundColorDirection: {
-		type: 'number',
-		default: 0,
-	},
-	backgroundType: {
-		type: 'string',
-		default: '',
-	},
-	backgroundImageID: {
-		type: 'number',
-	},
-	backgroundImageURL: {
-		type: 'string',
-	},
-	backgroundOpacity: {
-		type: 'number',
-		default: 5,
-	},
-	align: {
-		type: 'string',
-	},
-	design: {
-		type: 'string',
-		default: 'basic',
-	},
-	borderRadius: {
-		type: 'number',
-		default: 12,
-	},
-	shadow: {
-		type: 'number',
-		default: 3,
-	},
+
 	hoverEffect: {
 		type: 'string',
 		default: '',
-	},
-
-	// Custom CSS attributes.
-	customCSSUniqueID: {
-		type: 'string',
-		default: '',
-	},
-	customCSS: {
-		type: 'string',
-		default: '',
-	},
-	customCSSCompiled: {
-		type: 'string',
-		default: '',
-	},
-
-	// Keep the old attributes. Gutenberg issue https://github.com/WordPress/gutenberg/issues/10406
-	overlayColor: {
-		type: 'string',
-	},
-	mediaLink: {
-		type: 'string',
-	},
-	mediaID: {
-		type: 'number',
 	},
 }
 
@@ -116,5 +94,25 @@ export const settings = {
 	supports: {
 		align: [ 'center', 'wide', 'full' ],
 		inserter: ! disabledBlocks.includes( name ), // Hide if disabled.
+	},
+
+	deprecated,
+	edit,
+	save,
+
+	// Stackable modules.
+	modules: {
+		'advanced-general': true,
+		'advanced-block-spacing': true,
+		// 'advanced-column-spacing': true,
+		'advanced-responsive': true,
+		'block-background': true,
+		'block-separators': true,
+		'block-title': true,
+		// 'content-align': true,
+		'block-designs': true,
+		'custom-css': {
+			default: applyFilters( 'stackable.video-popup.custom-css.default', '' ),
+		},
 	},
 }

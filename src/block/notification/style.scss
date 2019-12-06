@@ -6,60 +6,157 @@
 
 @import "common";
 
-.ugb-notification {
-	@include baseBlock();
-	@include box();
-	padding: $box-hori-padding;
-	background-color: #40ba7b;
-	position: relative;
-	overflow: visible;
-	&,
-	p {
-		color: #fff;
-	}
-	svg {
-		fill: #fff;
-	}
-	&.ugb-notification--type-error {
-		background-color: #d9534f;
-		svg {
-			fill: #fff;
+.ugb-notification.ugb-notification--v2 {
+	.ugb-notification__item {
+		@include box();
+		padding: $box-hori-padding;
+		display: flex;
+		flex-direction: column;
+		> *:last-child {
+			margin-bottom: 0;
 		}
 	}
-	&.ugb-notification--type-info {
-		background-color: #2091e1;
-		svg {
-			fill: #fff;
-		}
+	.ugb-notification__icon,
+	.ugb-notification__title,
+	.ugb-notification__description {
+		margin: 0 0 $text-margin-bottom 0;
 	}
-	&.ugb-notification--type-warning {
-		background-color: #ffdd57;
-		&,
-		p {
-			color: #424242;
-		}
-		svg {
-			fill: #424242;
-		}
-	}
-	&.ugb-notification--dismissible {
-		padding-right: $box-vert-padding;
 
+	&.ugb-notification--design-basic,
+	&.ugb-notification--design-large-icon {
+		.ugb-notification__item {
+			background-color: #40ba7b;
+		}
+		.ugb-notification__icon,
+		.ugb-notification__title,
+		.ugb-notification__description {
+			color: #fff;
+		}
+		.ugb-notification__close-button svg,
+		.ugb-notification__icon {
+			fill: #fff;
+		}
+		&.ugb-notification--type-error {
+			.ugb-notification__item {
+				background-color: #d9534f;
+			}
+		}
+		&.ugb-notification--type-info {
+			.ugb-notification__item {
+				background-color: #2091e1;
+			}
+		}
+		&.ugb-notification--type-warning {
+			.ugb-notification__item {
+				background-color: #ffdd57;
+			}
+			.ugb-notification__icon,
+			.ugb-notification__title,
+			.ugb-notification__description {
+				color: #424242;
+			}
+			.ugb-notification__close-button svg,
+			.ugb-notification__icon {
+				fill: #424242;
+			}
+		}
+	}
+
+	// Plain design.
+	&.ugb-notification--design-plain {
+		.ugb-notification__item {
+			background: none;
+			border-radius: 0;
+			box-shadow: none;
+		}
+		.ugb-notification__icon,
+		.ugb-notification__title,
+		.ugb-notification__description,
+		.ugb-button--inner {
+			color: #40ba7b;
+		}
+		.ugb-notification__close-button svg,
+		.ugb-notification__icon {
+			fill: #40ba7b;
+		}
+		.ugb-button {
+			border-color: #40ba7b !important;
+		}
+
+		&.ugb-notification--type-error {
+			.ugb-notification__icon,
+			.ugb-notification__title,
+			.ugb-notification__description,
+			.ugb-button--inner {
+				color: #d9534f;
+			}
+			.ugb-notification__close-button svg,
+			.ugb-notification__icon {
+				fill: #d9534f;
+			}
+			.ugb-button {
+				border-color: #d9534f !important;
+			}
+		}
+
+		&.ugb-notification--type-info {
+			.ugb-notification__icon,
+			.ugb-notification__title,
+			.ugb-notification__description,
+			.ugb-button--inner {
+				color: #2091e1;
+			}
+			.ugb-notification__close-button svg,
+			.ugb-notification__icon {
+				fill: #2091e1;
+			}
+			.ugb-button {
+				border-color: #2091e1 !important;
+			}
+		}
+
+		&.ugb-notification--type-warning {
+			.ugb-notification__icon,
+			.ugb-notification__title,
+			.ugb-notification__description,
+			.ugb-button--inner {
+				color: #ff6f2f;
+			}
+			.ugb-notification__close-button svg,
+			.ugb-notification__icon {
+				fill: #ff6f2f;
+			}
+			.ugb-button {
+				border-color: #ff6f2f !important;
+			}
+		}
+	}
+
+	&.ugb-notification--dismissible {
 		// Hide at the start, JS will show it to avoid flickering.
 		display: none;
-	}
 
-	// Common shadow #9 doesn't show up since notification is too short.
-	&.ugb--shadow-9 {
-		box-shadow: 0 30px 90px -30px rgba(72, 73, 121, 0.38) !important;
+		.ugb-notification__item {
+			position: relative;
+			padding-right: $box-vert-padding;
+		}
+	}
+}
+
+.ugb-notification__icon {
+	&,
+	svg {
+		width: 30px;
+		height: 30px;
 	}
 }
 .ugb-notification__close-button {
-	position: absolute;
+	position: absolute !important;
+	top: 0;
 	right: 0;
 	z-index: 2;
-	margin-right: 1.5rem;
-	margin-top: 1.3rem;
+	margin-right: 30px;
+	margin-top: 30px;
 	font-size: 8px;
 	cursor: pointer;
 	width: 16px;
@@ -71,82 +168,5 @@
 	svg {
 		width: 100%;
 		height: auto;
-	}
-}
-
-/**
- * Deprecated. Version < 1.11
- */
-
-.wp-block-ugb-notification {
-	position: relative;
-}
-.ugb-notification {
-	border-radius: 4px;
-	color: #fff;
-	@include baseBlock();
-	@include box();
-	padding: $box-hori-padding;
-	background-color: #40ba7b;
-	&,
-	p {
-		color: #fff;
-	}
-	&.type-error {
-		background-color: #d9534f;
-	}
-	&.type-info {
-		background-color: #2091e1;
-	}
-	&.type-warning {
-		background-color: #ffdd57;
-		&,
-		p {
-			color: #424242;
-		}
-	}
-}
-
-.ugb-notification,
-.wp-block-ugb-notification {
-	position: relative;
-	.close-button {
-		position: absolute;
-		right: 0;
-		z-index: 2;
-		margin-right: 1.5rem;
-		margin-top: 1.3rem;
-		font-size: 8px;
-		padding-top: 0.3rem;
-		cursor: pointer;
-		svg {
-			width: 13px;
-			height: auto;
-		}
-	}
-}
-.ugb-notification.dismissible-true {
-	.wp-ugb-notif {
-		padding-right: $box-vert-padding;
-	}
-}
-.ugb-notification.type-success svg,
-.ugb-notification.type-error svg,
-.ugb-notification.type-info svg {
-	fill: #fff;
-}
-.ugb-notification.type-warning svg {
-	fill: #424242;
-}
-.ugb-notification.dismissible-true[data-uid] {
-	display: none;
-}
-
-// Fix bug where previously saved < v1.11 custom backgrounds
-// only color the middle area when viewing the page >= 1.11
-.ugb-notification:not([style*="background-color"]) {
-	p[style*="background-color"] {
-		margin: -35px !important;
-		padding: 35px;
 	}
 }

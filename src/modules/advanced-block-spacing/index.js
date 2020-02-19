@@ -6,6 +6,7 @@ import {
 	AdvancedToolbarControl,
 	FourRangeControl,
 	WhenResponsiveScreen,
+	PanelAdvancedSettings,
 } from '~stackable/components'
 import {
 	__getValue,
@@ -20,7 +21,6 @@ import {
 	addFilter, applyFilters, doAction, removeFilter,
 } from '@wordpress/hooks'
 import { __ } from '@wordpress/i18n'
-import { PanelBody } from '@wordpress/components'
 import deepmerge from 'deepmerge'
 import { Fragment } from '@wordpress/element'
 import { i18n } from 'stackable'
@@ -109,11 +109,186 @@ const inspectorControls = ( blockName, options ) => ( output, props ) => {
 	return (
 		<Fragment>
 			{ output }
-			<PanelBody
+			<PanelAdvancedSettings
 				title={ __( 'Block Spacing', i18n ) }
 				initialOpen={ false }
+				className="ugb--help-tip-advanced-block-spacing"
 			>
 				{ applyFilters( `stackable.${ blockName }.edit.advanced.block-spacing.before`, null, props ) }
+
+				{ options.height && <Fragment>
+					<WhenResponsiveScreen>
+						<AdvancedRangeControl
+							label={ __( 'Min. Block Height', i18n ) }
+							units={ [ 'px', 'vh' ] }
+							min={ [ 100, 10 ] }
+							max={ [ 1000, 100 ] }
+							step={ [ 1, 1 ] }
+							allowReset={ true }
+							value={ blockHeight }
+							unit={ blockHeightUnit }
+							onChange={ blockHeight => setAttributes( { blockHeight } ) }
+							onChangeUnit={ blockHeightUnit => setAttributes( { blockHeightUnit } ) }
+							initialPosition="100"
+							className="ugb--help-tip-advanced-block-height"
+						/>
+					</WhenResponsiveScreen>
+					<WhenResponsiveScreen screen="tablet">
+						<AdvancedRangeControl
+							label={ __( 'Min. Block Height', i18n ) }
+							units={ [ 'px', 'vh' ] }
+							min={ [ 100, 10 ] }
+							max={ [ 1000, 100 ] }
+							step={ [ 1, 1 ] }
+							allowReset={ true }
+							value={ tabletBlockHeight }
+							unit={ tabletBlockHeightUnit }
+							onChange={ tabletBlockHeight => setAttributes( { tabletBlockHeight } ) }
+							onChangeUnit={ tabletBlockHeightUnit => setAttributes( { tabletBlockHeightUnit } ) }
+							className="ugb--help-tip-advanced-block-height"
+						/>
+					</WhenResponsiveScreen>
+					<WhenResponsiveScreen screen="mobile">
+						<AdvancedRangeControl
+							label={ __( 'Min. Block Height', i18n ) }
+							units={ [ 'px', 'vh' ] }
+							min={ [ 100, 10 ] }
+							max={ [ 1000, 100 ] }
+							step={ [ 1, 1 ] }
+							allowReset={ true }
+							value={ mobileBlockHeight }
+							unit={ mobileBlockHeightUnit }
+							onChange={ mobileBlockHeight => setAttributes( { mobileBlockHeight } ) }
+							onChangeUnit={ mobileBlockHeightUnit => setAttributes( { mobileBlockHeightUnit } ) }
+							className="ugb--help-tip-advanced-block-height"
+						/>
+					</WhenResponsiveScreen>
+				</Fragment> }
+
+				{ options.verticalAlign &&
+					<Fragment>
+						{ blockHeight !== '' &&
+							<WhenResponsiveScreen>
+								<AdvancedToolbarControl
+									label={ __( 'Content Vertical Align', i18n ) }
+									controls="flex-vertical"
+									value={ blockVerticalAlign }
+									onChange={ value => setAttributes( { blockVerticalAlign: blockVerticalAlign !== value ? value : '' } ) }
+									className="ugb--help-tip-advanced-block-vertical-align"
+								/>
+							</WhenResponsiveScreen>
+						}
+						{ tabletBlockHeight !== '' &&
+							<WhenResponsiveScreen screen="tablet">
+								<AdvancedToolbarControl
+									label={ __( 'Content Vertical Align', i18n ) }
+									controls="flex-vertical"
+									value={ tabletBlockVerticalAlign }
+									onChange={ value => setAttributes( { tabletBlockVerticalAlign: tabletBlockVerticalAlign !== value ? value : '' } ) }
+									className="ugb--help-tip-advanced-block-vertical-align"
+								/>
+							</WhenResponsiveScreen>
+						}
+						{ mobileBlockHeight !== '' &&
+							<WhenResponsiveScreen screen="mobile">
+								<AdvancedToolbarControl
+									label={ __( 'Content Vertical Align', i18n ) }
+									controls="flex-vertical"
+									value={ mobileBlockVerticalAlign }
+									onChange={ value => setAttributes( { mobileBlockVerticalAlign: mobileBlockVerticalAlign !== value ? value : '' } ) }
+									className="ugb--help-tip-advanced-block-vertical-align"
+								/>
+							</WhenResponsiveScreen>
+						}
+					</Fragment>
+				}
+
+				{ options.width && <Fragment>
+					<WhenResponsiveScreen>
+						<AdvancedRangeControl
+							label={ __( 'Max. Content Width', i18n ) }
+							units={ [ 'px', '%' ] }
+							min={ [ 100, 10 ] }
+							max={ [ 2000, 100 ] }
+							step={ [ 1, 1 ] }
+							allowReset={ true }
+							value={ blockWidth }
+							unit={ blockWidthUnit }
+							onChange={ blockWidth => setAttributes( { blockWidth } ) }
+							onChangeUnit={ blockWidthUnit => setAttributes( { blockWidthUnit } ) }
+							initialPosition="2000"
+							className="ugb--help-tip-advanced-block-content-width"
+						/>
+					</WhenResponsiveScreen>
+					<WhenResponsiveScreen screen="tablet">
+						<AdvancedRangeControl
+							label={ __( 'Max. Content Width', i18n ) }
+							units={ [ 'px', '%' ] }
+							min={ [ 100, 10 ] }
+							max={ [ 1500, 100 ] }
+							step={ [ 1, 1 ] }
+							allowReset={ true }
+							value={ tabletBlockWidth }
+							unit={ tabletBlockWidthUnit }
+							onChange={ tabletBlockWidth => setAttributes( { tabletBlockWidth } ) }
+							onChangeUnit={ tabletBlockWidthUnit => setAttributes( { tabletBlockWidthUnit } ) }
+							className="ugb--help-tip-advanced-block-content-width"
+						/>
+					</WhenResponsiveScreen>
+					<WhenResponsiveScreen screen="mobile">
+						<AdvancedRangeControl
+							label={ __( 'Max. Content Width', i18n ) }
+							units={ [ 'px', '%' ] }
+							min={ [ 100, 10 ] }
+							max={ [ 1000, 100 ] }
+							step={ [ 1, 1 ] }
+							allowReset={ true }
+							value={ mobileBlockWidth }
+							unit={ mobileBlockWidthUnit }
+							onChange={ mobileBlockWidth => setAttributes( { mobileBlockWidth } ) }
+							onChangeUnit={ mobileBlockWidthUnit => setAttributes( { mobileBlockWidthUnit } ) }
+							className="ugb--help-tip-advanced-block-content-width"
+						/>
+					</WhenResponsiveScreen>
+				</Fragment> }
+
+				{ ( options.horizontalAlign || ( blockInnerWidth !== '' && blockInnerWidth !== 'full' ) ) &&
+					<Fragment>
+						{ ( blockWidth !== '' || ( blockInnerWidth !== '' && blockInnerWidth !== 'full' ) ) &&
+							<WhenResponsiveScreen>
+								<AdvancedToolbarControl
+									label={ __( 'Content Horizontal Align', i18n ) }
+									controls="flex-horizontal"
+									value={ blockHorizontalAlign }
+									onChange={ value => setAttributes( { blockHorizontalAlign: blockHorizontalAlign !== value ? value : '' } ) }
+									className="ugb--help-tip-advanced-block-horizontal-align"
+								/>
+							</WhenResponsiveScreen>
+						}
+						{ ( tabletBlockWidth !== '' || ( blockInnerWidth !== '' && blockInnerWidth !== 'full' ) ) &&
+							<WhenResponsiveScreen screen="tablet">
+								<AdvancedToolbarControl
+									label={ __( 'Content Horizontal Align', i18n ) }
+									controls="flex-horizontal"
+									value={ tabletBlockHorizontalAlign }
+									onChange={ value => setAttributes( { tabletBlockHorizontalAlign: tabletBlockHorizontalAlign !== value ? value : '' } ) }
+									className="ugb--help-tip-advanced-block-horizontal-align"
+								/>
+							</WhenResponsiveScreen>
+						}
+						{ ( mobileBlockWidth !== '' || ( blockInnerWidth !== '' && blockInnerWidth !== 'full' ) ) &&
+							<WhenResponsiveScreen screen="mobile">
+								<AdvancedToolbarControl
+									label={ __( 'Content Horizontal Align', i18n ) }
+									controls="flex-horizontal"
+									value={ mobileBlockHorizontalAlign }
+									onChange={ value => setAttributes( { mobileBlockHorizontalAlign: mobileBlockHorizontalAlign !== value ? value : '' } ) }
+									className="ugb--help-tip-advanced-block-horizontal-align"
+								/>
+							</WhenResponsiveScreen>
+						}
+					</Fragment>
+				}
 
 				{ options.margins && <Fragment>
 					<WhenResponsiveScreen screen="desktop">
@@ -143,6 +318,7 @@ const inspectorControls = ( blockName, options ) => ( output, props ) => {
 							enableBottom={ options.enableMarginBottom }
 							enableLeft={ align !== 'full' && options.enableMarginLeft }
 							initialPosition="0"
+							className="ugb--help-tip-advanced-block-margins"
 						/>
 					</WhenResponsiveScreen>
 					<WhenResponsiveScreen screen="tablet">
@@ -172,6 +348,7 @@ const inspectorControls = ( blockName, options ) => ( output, props ) => {
 							enableBottom={ options.enableMarginBottom }
 							enableLeft={ align !== 'full' && options.enableMarginLeft }
 							initialPosition="0"
+							className="ugb--help-tip-advanced-block-margins"
 						/>
 					</WhenResponsiveScreen>
 					<WhenResponsiveScreen screen="mobile">
@@ -201,6 +378,7 @@ const inspectorControls = ( blockName, options ) => ( output, props ) => {
 							enableBottom={ options.enableMarginBottom }
 							enableLeft={ align !== 'full' && options.enableMarginLeft }
 							initialPosition="0"
+							className="ugb--help-tip-advanced-block-margins"
 						/>
 					</WhenResponsiveScreen>
 				</Fragment> }
@@ -232,6 +410,7 @@ const inspectorControls = ( blockName, options ) => ( output, props ) => {
 							enableBottom={ options.enablePaddingBottom }
 							enableLeft={ options.enablePaddingLeft }
 							initialPosition="10"
+							className="ugb--help-tip-advanced-block-paddings"
 						/>
 					</WhenResponsiveScreen>
 					<WhenResponsiveScreen screen="tablet">
@@ -260,6 +439,7 @@ const inspectorControls = ( blockName, options ) => ( output, props ) => {
 							enableRight={ options.enablePaddingRight }
 							enableBottom={ options.enablePaddingBottom }
 							enableLeft={ options.enablePaddingLeft }
+							className="ugb--help-tip-advanced-block-paddings"
 						/>
 					</WhenResponsiveScreen>
 					<WhenResponsiveScreen screen="mobile">
@@ -288,174 +468,13 @@ const inspectorControls = ( blockName, options ) => ( output, props ) => {
 							enableRight={ options.enablePaddingRight }
 							enableBottom={ options.enablePaddingBottom }
 							enableLeft={ options.enablePaddingLeft }
+							className="ugb--help-tip-advanced-block-paddings"
 						/>
 					</WhenResponsiveScreen>
 				</Fragment> }
-
-				{ options.height && <Fragment>
-					<WhenResponsiveScreen>
-						<AdvancedRangeControl
-							label={ __( 'Min. Block Height', i18n ) }
-							units={ [ 'px', 'vh' ] }
-							min={ [ 100, 10 ] }
-							max={ [ 1000, 100 ] }
-							step={ [ 1, 1 ] }
-							allowReset={ true }
-							value={ blockHeight }
-							unit={ blockHeightUnit }
-							onChange={ blockHeight => setAttributes( { blockHeight } ) }
-							onChangeUnit={ blockHeightUnit => setAttributes( { blockHeightUnit } ) }
-							initialPosition="100"
-						/>
-					</WhenResponsiveScreen>
-					<WhenResponsiveScreen screen="tablet">
-						<AdvancedRangeControl
-							label={ __( 'Min. Block Height', i18n ) }
-							units={ [ 'px', 'vh' ] }
-							min={ [ 100, 10 ] }
-							max={ [ 1000, 100 ] }
-							step={ [ 1, 1 ] }
-							allowReset={ true }
-							value={ tabletBlockHeight }
-							unit={ tabletBlockHeightUnit }
-							onChange={ tabletBlockHeight => setAttributes( { tabletBlockHeight } ) }
-							onChangeUnit={ tabletBlockHeightUnit => setAttributes( { tabletBlockHeightUnit } ) }
-						/>
-					</WhenResponsiveScreen>
-					<WhenResponsiveScreen screen="mobile">
-						<AdvancedRangeControl
-							label={ __( 'Min. Block Height', i18n ) }
-							units={ [ 'px', 'vh' ] }
-							min={ [ 100, 10 ] }
-							max={ [ 1000, 100 ] }
-							step={ [ 1, 1 ] }
-							allowReset={ true }
-							value={ mobileBlockHeight }
-							unit={ mobileBlockHeightUnit }
-							onChange={ mobileBlockHeight => setAttributes( { mobileBlockHeight } ) }
-							onChangeUnit={ mobileBlockHeightUnit => setAttributes( { mobileBlockHeightUnit } ) }
-						/>
-					</WhenResponsiveScreen>
-				</Fragment> }
-
-				{ options.verticalAlign &&
-					<Fragment>
-						{ blockHeight !== '' &&
-							<WhenResponsiveScreen>
-								<AdvancedToolbarControl
-									label={ __( 'Content Vertical Align', i18n ) }
-									controls="flex-vertical"
-									value={ blockVerticalAlign }
-									onChange={ value => setAttributes( { blockVerticalAlign: blockVerticalAlign !== value ? value : '' } ) }
-								/>
-							</WhenResponsiveScreen>
-						}
-						{ tabletBlockHeight !== '' &&
-							<WhenResponsiveScreen screen="tablet">
-								<AdvancedToolbarControl
-									label={ __( 'Content Vertical Align', i18n ) }
-									controls="flex-vertical"
-									value={ tabletBlockVerticalAlign }
-									onChange={ value => setAttributes( { tabletBlockVerticalAlign: tabletBlockVerticalAlign !== value ? value : '' } ) }
-								/>
-							</WhenResponsiveScreen>
-						}
-						{ mobileBlockHeight !== '' &&
-							<WhenResponsiveScreen screen="mobile">
-								<AdvancedToolbarControl
-									label={ __( 'Content Vertical Align', i18n ) }
-									controls="flex-vertical"
-									value={ mobileBlockVerticalAlign }
-									onChange={ value => setAttributes( { mobileBlockVerticalAlign: mobileBlockVerticalAlign !== value ? value : '' } ) }
-								/>
-							</WhenResponsiveScreen>
-						}
-					</Fragment>
-				}
-
-				{ options.width && <Fragment>
-					<WhenResponsiveScreen>
-						<AdvancedRangeControl
-							label={ __( 'Max. Content Width', i18n ) }
-							units={ [ 'px', '%' ] }
-							min={ [ 100, 10 ] }
-							max={ [ 2000, 100 ] }
-							step={ [ 1, 1 ] }
-							allowReset={ true }
-							value={ blockWidth }
-							unit={ blockWidthUnit }
-							onChange={ blockWidth => setAttributes( { blockWidth } ) }
-							onChangeUnit={ blockWidthUnit => setAttributes( { blockWidthUnit } ) }
-							initialPosition="2000"
-						/>
-					</WhenResponsiveScreen>
-					<WhenResponsiveScreen screen="tablet">
-						<AdvancedRangeControl
-							label={ __( 'Max. Content Width', i18n ) }
-							units={ [ 'px', '%' ] }
-							min={ [ 100, 10 ] }
-							max={ [ 1500, 100 ] }
-							step={ [ 1, 1 ] }
-							allowReset={ true }
-							value={ tabletBlockWidth }
-							unit={ tabletBlockWidthUnit }
-							onChange={ tabletBlockWidth => setAttributes( { tabletBlockWidth } ) }
-							onChangeUnit={ tabletBlockWidthUnit => setAttributes( { tabletBlockWidthUnit } ) }
-						/>
-					</WhenResponsiveScreen>
-					<WhenResponsiveScreen screen="mobile">
-						<AdvancedRangeControl
-							label={ __( 'Max. Content Width', i18n ) }
-							units={ [ 'px', '%' ] }
-							min={ [ 100, 10 ] }
-							max={ [ 1000, 100 ] }
-							step={ [ 1, 1 ] }
-							allowReset={ true }
-							value={ mobileBlockWidth }
-							unit={ mobileBlockWidthUnit }
-							onChange={ mobileBlockWidth => setAttributes( { mobileBlockWidth } ) }
-							onChangeUnit={ mobileBlockWidthUnit => setAttributes( { mobileBlockWidthUnit } ) }
-						/>
-					</WhenResponsiveScreen>
-				</Fragment> }
-
-				{ ( options.horizontalAlign || ( blockInnerWidth !== '' && blockInnerWidth !== 'full' ) ) &&
-					<Fragment>
-						{ ( blockWidth !== '' || ( blockInnerWidth !== '' && blockInnerWidth !== 'full' ) ) &&
-							<WhenResponsiveScreen>
-								<AdvancedToolbarControl
-									label={ __( 'Content Horizontal Align', i18n ) }
-									controls="flex-horizontal"
-									value={ blockHorizontalAlign }
-									onChange={ value => setAttributes( { blockHorizontalAlign: blockHorizontalAlign !== value ? value : '' } ) }
-								/>
-							</WhenResponsiveScreen>
-						}
-						{ ( tabletBlockWidth !== '' || ( blockInnerWidth !== '' && blockInnerWidth !== 'full' ) ) &&
-							<WhenResponsiveScreen screen="tablet">
-								<AdvancedToolbarControl
-									label={ __( 'Content Horizontal Align', i18n ) }
-									controls="flex-horizontal"
-									value={ tabletBlockHorizontalAlign }
-									onChange={ value => setAttributes( { tabletBlockHorizontalAlign: tabletBlockHorizontalAlign !== value ? value : '' } ) }
-								/>
-							</WhenResponsiveScreen>
-						}
-						{ ( mobileBlockWidth !== '' || ( blockInnerWidth !== '' && blockInnerWidth !== 'full' ) ) &&
-							<WhenResponsiveScreen screen="mobile">
-								<AdvancedToolbarControl
-									label={ __( 'Content Horizontal Align', i18n ) }
-									controls="flex-horizontal"
-									value={ mobileBlockHorizontalAlign }
-									onChange={ value => setAttributes( { mobileBlockHorizontalAlign: mobileBlockHorizontalAlign !== value ? value : '' } ) }
-								/>
-							</WhenResponsiveScreen>
-						}
-					</Fragment>
-				}
 
 				{ applyFilters( `stackable.${ blockName }.edit.advanced.block-spacing.after`, null, props ) }
-			</PanelBody>
+			</PanelAdvancedSettings>
 		</Fragment>
 	)
 }

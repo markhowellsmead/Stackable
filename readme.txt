@@ -1,20 +1,20 @@
-=== Stackable - Gutenberg Blocks ===
+=== Stackable - Page Builder Gutenberg Blocks ===
 Contributors: bfintal, gambitph, freemius
-Tags: gutenberg, block, blocks, block editor, gutenberg blocks, page builder, editor, wordpress 5.0
-Requires at least: 5.0
-Tested up to: 5.3
+Tags: blocks, gutenberg, gutenberg blocks, page builder, WordPress blocks
+Requires at least: 5.2
+Tested up to: 5.3.2
 Requires PHP: 5.3
-Stable tag: 2.0.2
+Stable tag: 2.2.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-An Amazing Block Collection That Lets You Reimagine the Way You Use the WordPress Block Editor (Gutenberg).
+An Amazing Block Library That Lets You Reimagine the Way You Use the WordPress Block Editor (Gutenberg).
 
 == Description ==
 
 **Reimagine the Way You Use the WordPress Block Editor**
 
-[Stackable](https://wpstackable.com) is one of the first and most expansive block collections made specially for the new WordPress Block Editor (Gutenberg). It adds essential custom blocks to Gutenberg’s arsenal to achieve a smooth page building experience. With its latest iteration, Stackable brings a suite of high quality blocks for page building, with precision design tools that let you build the perfect website and landing page that you want.
+[Stackable](https://wpstackable.com) is one of the first and most expansive block library made specially for the new WordPress Block Editor (Gutenberg). It adds essential custom blocks to Gutenberg’s arsenal to achieve a smooth page building experience. With its latest iteration, Stackable brings a suite of high quality blocks for page building, with precision design tools that let you build the perfect website and landing page that you want.
 
 [youtube https://www.youtube.com/watch?v=m2I-pCYPezk]
 
@@ -47,7 +47,7 @@ Having this flexibility makes Stackable an all-in-one tool for building your web
 
 Together with this new way of building sections, we’ll start you off with great built-in multiple block layouts and pre-set section / block designs. All our designs are stunning, professionally-made and ready-to-use.
 
-Unlike any other block collection, our pre-set section / block designs are **cohesive across almost all blocks, making them truly useable for building full websites**. Gain access to a very diverse collection of pre-set designs and layouts which are all **interchangeable with one click!**
+Unlike any other block library, our pre-set section / block designs are **cohesive across almost all blocks, making them truly useable for building full websites**. Gain access to a very diverse collection of pre-set designs and layouts which are all **interchangeable with one click!**
 
 We have absolutely the best and most expansive design collection with 50+ block layouts and 60+ pre-set design sections (with more on the way!).
 
@@ -68,7 +68,7 @@ Stackable now offers the most advanced block design controls with the widest ran
 
 All of Stackable's powerful options are easily managed in an intuitive UI for a smooth block editing experience. This is achieved by our three-tab configuration, easy toggle on/off for block elements, and streamlined settings.
 
-## A Truly Useful Block Collection with 23 Quality Gutenberg Blocks
+## A Truly Useful Block Library with 23 Quality Gutenberg Blocks
 
 We’ve come up with page building blocks that are all functional and stunning. We’ve put in the design effort so you can enjoy a truly usable and quality block collection for the new WordPress block editor (Gutenberg).
 
@@ -78,7 +78,7 @@ Get our WordPress theme that's beautiful & flexible, Gutenberg-ready and made es
 
 ## Stackable Premium
 
-Stackable Premium extends the capabilities of Stackable and the new WordPress editor to give you the smoothest page building experience. Using the core Stackable Philosophy of balancing utility and great design, Stackable Premium offers:
+[Stackable Premium](https://wpstackable.com/premium) extends the capabilities of Stackable and the new WordPress editor to give you the smoothest page building experience. Using the core Stackable Philosophy of balancing utility and great design, Stackable Premium offers:
 
 - Premium Block Layouts and Pre-Set Section / Block Designs
 - Premium hover and image box effects
@@ -118,6 +118,8 @@ Try out a [live demo of Stackable Premium](https://demo.wpstackable.com/v2/)
 
 ### News Article Updates
 
+- [v2.2 Welcome Video, Better Separators and Auto-Block Recovery](https://wpstackable.com/blog/welcome-video-better-separators-and-auto-block-recovery/)
+- [v2.1 Help Video Snippets and Auto-Expand Settings](https://wpstackable.com/blog/help-video-snippets-auto-expand-settings/)
 - [v2.0 Version 2 is Out!](https://wpstackable.com/blog/version-2-is-out)
 - [v1.17 Text Color and Text Highlight](https://wpstackable.com/blog/text-color-and-text-highlight)
 - [v1.16 Translations: Stackable in Your Language](https://wpstackable.com/blog/translations-stackable-in-your-language/)
@@ -170,9 +172,67 @@ Nope. Stackable only works with Gutenberg, the new WordPress editor.
 
 == Upgrade Notice ==
 
-[Version 2](https://wpstackable.com/blog/version-2-is-out) is a major update, make sure you're backed up in case of any hiccups.
-
 == Changelog ==
+
+= 2.2.1 =
+
+* Change: Added "Learn more" link for block background help tooltip
+* Fixed: Block auto-recovery did not take effect for blocks inside columns
+* Fixed: Some themes may force pseudo elements on our blocks and this will destroy our column layouts.
+* Fixed: Removed "Contact Us" for white labelled sites
+* Fixed: Removed "Edit as HTML" for Container blocks
+
+= 2.2.0 =
+[Welcome Video, Better Separators and Auto-Block Recovery](https://wpstackable.com/blog/welcome-video-better-separators-and-auto-block-recovery/)
+
+* New: Welcome to Stackable modal popup
+* New: Auto-block recovery functionality for styling block errors and block update errors
+* New: Support for Jetpack's Site Accelerator for background images
+* New: Added 2 new separators: Rounded 3 and Wave 4
+* New: Added vertical flip for top and bottom separators
+* Change: Updated video in settings screen
+* Fixed: Border radius not being followed for blog posts block when updating from v1
+* Fixed: Fixed mobile responsiveness of blog posts block when using 4 columns
+* Fixed: Centered the image in Overlap Shape 4 and Overlap Shape 5 layouts in feature blocks
+* Fixed: Feature block responsiveness for image column width option
+* Fixed: Feature block responsiveness issues for overlap layouts
+* Fixed: Only apply default z-index to Stackable blocks
+* Fixed: Compatibility with Slides & Presentations plugin
+* Fixed: Native text block colors now work properly inside Container blocks with background colors
+* Fixed: Fixed font size for tablet and mobile in multiple blocks not being applied
+* Fixed: Removed left and right margins in Blockquote blocks in the editor for some themes
+* Fixed: Separator block default height is too big in tablet and mobile
+* Fixed: Better generation of excerpts for posts. Prevent WPBakery from overriding post excerpts
+* Fixed: Bottom Separator layout images are now oriented correctly
+
+= 2.1.0 =
+[Help Video Snippets and Auto-Expand Settings](https://wpstackable.com/blog/help-video-snippets-auto-expand-settings/)
+
+* New: Added help tooltip video snippets for block options
+* New: Double-click a block component to open inspector settings
+* New: Now brings opened inspector panels into view
+* New: Affiliation menu, become a Stackable Affiliate!
+* Fixed: Changed arrangement of some advanced block settings
+* Fixed: PHP Notice undefined index featured_media in Posts block
+* Fixed: Corrected typo in Advanced Column settings to "Column Paddings"
+* Fixed: Toolbar control compatibility with Gutenberg 7.1.0
+
+= 2.0.4 =
+* Fixed: Better sticky tabs detection and placement
+* Fixed: Possible migration error if v1 button label is blank
+* Fixed: Button block is not centered properly
+* Fixed: Ghost button color sometimes aren't followed
+* Fixed: Added smooth transition to button icons
+* Fixed: Social button icons colors not being applied in Team Member block
+
+= 2.0.3 =
+* Fixed: Jetpack Search compatibility may show an error
+* Fixed: Top/bottom margins of full-width Separator blocks (and other full-width blocks) when migrating from v1
+* Fixed: Testimonial basic 2 layout from v1 suddenly have shadows
+* Fixed: Feature Grid block now estimates a closer image size when migrating from v1
+* Fixed: Container block's vertical align option wasn't being followed
+* Fixed: Blog Posts block strips out strings with a dollar sign followed by a number
+* New: Decrease minimum block margins to -500px and -100%
 
 = 2.0.2 =
 * Fixed: Container child block toolbars being cut off when editing

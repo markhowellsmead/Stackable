@@ -62,7 +62,7 @@ export default compose( [
 		const { getBlockName } = select( 'core/block-editor' )
 
 		return {
-			blockName: clientId ? getBlockName( clientId ).replace( /^\w+\//g, '' ) : '',
+			blockName: clientId && getBlockName( clientId ) ? getBlockName( clientId ).replace( /^\w+\//g, '' ) : '',
 			getJSONBlockAttributes: () => {
 				const { getBlockName } = select( 'core/block-editor' )
 				const { getBlockType } = select( 'core/blocks' )
@@ -87,7 +87,7 @@ export default compose( [
 				cleanedAttributes.uniqueClass = undefined
 
 				// The filter should omit attributes which should not be overridden. For example, text titles.
-				return JSON.stringify( applyFilters( `stackable.${ blockName }.design.apply-block-attributes`, cleanedAttributes ), null, 4 )
+				return JSON.stringify( applyFilters( `stackable.${ blockName }.design.filtered-block-attributes`, cleanedAttributes ), null, 4 )
 			},
 		}
 	} ),

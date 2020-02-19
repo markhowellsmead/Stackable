@@ -42,6 +42,7 @@ import {
 	withTabbedInspector,
 	withContentAlignReseter,
 	withBlockStyles,
+	withClickOpenInspector,
 } from '~stackable/higher-order'
 
 /**
@@ -58,7 +59,6 @@ import { showOptions } from './util'
  */
 import {
 	PanelBody,
-	RangeControl,
 	ToggleControl,
 } from '@wordpress/components'
 import {
@@ -124,12 +124,13 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 		<Fragment>
 			{ output }
 			<PanelBody title={ __( 'General', i18n ) }>
-				<RangeControl
+				<AdvancedRangeControl
 					label={ __( 'Columns', i18n ) }
 					value={ columns }
 					onChange={ columns => setAttributes( { columns } ) }
 					min={ 1 }
 					max={ 3 }
+					className="ugb--help-tip-general-columns"
 				/>
 				{ show.borderRadius &&
 					<AdvancedRangeControl
@@ -140,6 +141,7 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 						max={ 50 }
 						allowReset={ true }
 						placeholder="12"
+						className="ugb--help-tip-general-border-radius"
 					/>
 				}
 				{ show.shadow &&
@@ -151,6 +153,7 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 						max={ 9 }
 						allowReset={ true }
 						placeholder="3"
+						className="ugb--help-tip-general-shadow"
 					/>
 				}
 				<ContentAlignControl
@@ -160,16 +163,18 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 			</PanelBody>
 
 			{ show.columnBackground &&
-				<PanelBody
+				<PanelAdvancedSettings
 					title={ __( 'Column Background', i18n ) }
 					initialOpen={ false }
+					id="column-background"
+					className="ugb--help-tip-column-background-on-off"
 				>
 					<BackgroundControlsHelper
 						attrNameTemplate="column%s"
 						setAttributes={ setAttributes }
 						blockAttributes={ props.attributes }
 					/>
-				</PanelBody>
+				</PanelAdvancedSettings>
 			}
 
 			<PanelAdvancedSettings
@@ -220,7 +225,10 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 							setAttributes={ setAttributes }
 							blockAttributes={ props.attributes }
 						>
-							<AlignButtonsControl label={ __( 'Align', i18n ) } />
+							<AlignButtonsControl
+								label={ __( 'Align', i18n ) }
+								className="ugb--help-tip-alignment-image"
+							/>
 						</ResponsiveControl>
 					</Fragment>
 				}
@@ -251,6 +259,7 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 									min={ 150 }
 									max={ 800 }
 									allowReset={ true }
+									className="ugb--help-tip-image-height-crop"
 								/>
 							</ResponsiveControl>
 						}
@@ -266,6 +275,7 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 									max={ 90 }
 									allowReset={ true }
 									placeholder="50"
+									className="ugb--help-tip-image-width-crop"
 								/>
 							</ResponsiveControl>
 						}
@@ -275,6 +285,7 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 
 			<PanelAdvancedSettings
 				title={ __( 'Name', i18n ) }
+				id="name"
 				checked={ showName }
 				onChange={ showName => setAttributes( { showName } ) }
 				toggleOnSetAttributes={ [
@@ -304,12 +315,16 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-name"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Position', i18n ) }
+				id="position"
 				checked={ showPosition }
 				onChange={ showPosition => setAttributes( { showPosition } ) }
 				toggleOnSetAttributes={ [
@@ -334,12 +349,16 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-name"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Description', i18n ) }
+				id="description"
 				checked={ showDescription }
 				onChange={ showDescription => setAttributes( { showDescription } ) }
 				toggleOnSetAttributes={ [
@@ -364,13 +383,17 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-description"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			{ show.social &&
 				<PanelAdvancedSettings
 					title={ __( 'Social', i18n ) }
+					id="social"
 					checked={ showSocial }
 					onChange={ showSocial => setAttributes( { showSocial } ) }
 					toggleOnSetAttributes={ [
@@ -405,7 +428,10 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 						setAttributes={ setAttributes }
 						blockAttributes={ props.attributes }
 					>
-						<AlignButtonsControl label={ __( 'Align', i18n ) } />
+						<AlignButtonsControl
+							label={ __( 'Align', i18n ) }
+							className="ugb--help-tip-alignment-button"
+						/>
 					</ResponsiveControl>
 				</PanelAdvancedSettings>
 			}
@@ -425,6 +451,7 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-image"
 						/>
 					</ResponsiveControl>
 				}
@@ -439,6 +466,7 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-name"
 						/>
 					</ResponsiveControl>
 				}
@@ -453,6 +481,7 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-name"
 						/>
 					</ResponsiveControl>
 				}
@@ -467,6 +496,7 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-description"
 						/>
 					</ResponsiveControl>
 				}
@@ -481,6 +511,7 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-button"
 						/>
 					</ResponsiveControl>
 				}
@@ -495,6 +526,7 @@ addFilter( 'stackable.team-member.edit.inspector.style.before', 'stackable/team-
 							min={ -20 }
 							max={ 30 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-button-gap"
 						/>
 					</ResponsiveControl>
 				}
@@ -692,6 +724,13 @@ export default compose(
 	withTabbedInspector(),
 	withContentAlignReseter( [ 'Image%sAlign', 'Name%sAlign', 'Position%sAlign', 'Description%sAlign', 'Social%sAlign' ] ),
 	withBlockStyles( createStyles, { editorMode: true } ),
+	withClickOpenInspector( [
+		[ '.ugb-team-member__item', 'column-background' ],
+		[ '.ugb-team-member__name', 'name' ],
+		[ '.ugb-team-member__position', 'position' ],
+		[ '.ugb-team-member__description', 'description' ],
+		[ '.ugb-button', 'social' ],
+	] ),
 	withSelect( ( select, props ) => {
 		// Once the editor is loaded, cache the other sizes of the image.
 		cacheImageData( props.attributes.image1Id, select )

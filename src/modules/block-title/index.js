@@ -51,6 +51,7 @@ const addInspectorPanel = ( output, props ) => {
 			{ output }
 			<PanelAdvancedSettings
 				title={ __( 'Block Title', i18n ) }
+				id="block-title"
 				className="ugb-panel-block-title-module"
 				checked={ showBlockTitle }
 				onChange={ showBlockTitle => {
@@ -88,11 +89,15 @@ const addInspectorPanel = ( output, props ) => {
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-title"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 			<PanelAdvancedSettings
 				title={ __( 'Block Description', i18n ) }
+				id="block-description"
 				checked={ showBlockDescription }
 				onChange={ showBlockDescription => {
 					const attrs = { showBlockDescription }
@@ -125,7 +130,10 @@ const addInspectorPanel = ( output, props ) => {
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-description"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 		</Fragment>
@@ -251,6 +259,7 @@ const addTitleSpacing = ( output, props ) => {
 						min={ -50 }
 						max={ 100 }
 						allowReset={ true }
+						className="ugb--help-tip-spacing-block-title"
 					/>
 				</ResponsiveControl>
 			) }
@@ -265,6 +274,7 @@ const addTitleSpacing = ( output, props ) => {
 						min={ -50 }
 						max={ 100 }
 						allowReset={ true }
+						className="ugb--help-tip-spacing-block-description"
 					/>
 				</ResponsiveControl>
 			) }
@@ -405,7 +415,7 @@ const blockTitle = blockName => {
 	addFilter( `stackable.${ blockName }.save.output.before`, `stackable/${ blockName }/block-title`, addTitleSaveOutput )
 	addFilter( `stackable.${ blockName }.styles`, `stackable/${ blockName }/block-title`, addStyles )
 	addFilter( 'stackable.with-content-align-reseter.attributeNamesToReset', `stackable/${ blockName }/block-title`, centerBlockTitle )
-	addFilter( `stackable.${ blockName }.design.apply-block-attributes`, `stackable/${ blockName }/block-title`, removeAttributesFromDesignAttributeExport )
+	addFilter( `stackable.${ blockName }.design.filtered-block-attributes`, `stackable/${ blockName }/block-title`, removeAttributesFromDesignAttributeExport )
 	doAction( `stackable.module.block-title`, blockName )
 }
 

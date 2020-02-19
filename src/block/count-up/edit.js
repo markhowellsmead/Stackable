@@ -30,6 +30,7 @@ import {
 	withSetAttributeHook,
 	withTabbedInspector,
 	withUniqueClass,
+	withClickOpenInspector,
 } from '~stackable/higher-order'
 
 /**
@@ -48,9 +49,7 @@ import {
 } from '@wordpress/i18n'
 import { addFilter, applyFilters } from '@wordpress/hooks'
 import { i18n, showProNotice } from 'stackable'
-import {
-	PanelBody, RangeControl,
-} from '@wordpress/components'
+import { PanelBody } from '@wordpress/components'
 import classnames from 'classnames'
 import { compose } from '@wordpress/compose'
 import { Fragment } from '@wordpress/element'
@@ -108,12 +107,13 @@ addFilter( 'stackable.count-up.edit.inspector.style.before', 'stackable/count-up
 		<Fragment>
 			{ output }
 			<PanelBody title={ __( 'General', i18n ) }>
-				<RangeControl
+				<AdvancedRangeControl
 					label={ __( 'Columns', i18n ) }
 					value={ columns }
 					onChange={ columns => setAttributes( { columns } ) }
 					min={ 1 }
 					max={ 4 }
+					className="ugb--help-tip-general-columns"
 				/>
 				{ show.columnBackground &&
 					<AdvancedRangeControl
@@ -124,6 +124,7 @@ addFilter( 'stackable.count-up.edit.inspector.style.before', 'stackable/count-up
 						max={ 50 }
 						allowReset={ true }
 						placeholder="12"
+						className="ugb--help-tip-general-border-radius"
 					/>
 				}
 				{ show.columnBackground &&
@@ -135,6 +136,7 @@ addFilter( 'stackable.count-up.edit.inspector.style.before', 'stackable/count-up
 						max={ 9 }
 						allowReset={ true }
 						placeholder="3"
+						className="ugb--help-tip-general-shadow"
 					/>
 				}
 				<ContentAlignControl
@@ -144,20 +146,23 @@ addFilter( 'stackable.count-up.edit.inspector.style.before', 'stackable/count-up
 			</PanelBody>
 
 			{ show.columnBackground &&
-				<PanelBody
+				<PanelAdvancedSettings
 					title={ __( 'Column Background', i18n ) }
+					id="column-background"
 					initialOpen={ false }
+					className="ugb--help-tip-column-background-on-off"
 				>
 					<BackgroundControlsHelper
 						attrNameTemplate="column%s"
 						setAttributes={ setAttributes }
 						blockAttributes={ props.attributes }
 					/>
-				</PanelBody>
+				</PanelAdvancedSettings>
 			}
 
 			<PanelAdvancedSettings
 				title={ __( 'Icon', i18n ) }
+				id="icon"
 				checked={ showIcon }
 				onChange={ showIcon => setAttributes( { showIcon } ) }
 				toggleOnSetAttributes={ [
@@ -204,12 +209,16 @@ addFilter( 'stackable.count-up.edit.inspector.style.before', 'stackable/count-up
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-icon"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Title', i18n ) }
+				id="title"
 				checked={ showTitle }
 				onChange={ showTitle => setAttributes( { showTitle } ) }
 				toggleOnSetAttributes={ [
@@ -239,12 +248,16 @@ addFilter( 'stackable.count-up.edit.inspector.style.before', 'stackable/count-up
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-title"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Number', i18n ) }
+				id="number"
 				checked={ showNumber }
 				onChange={ showNumber => setAttributes( { showNumber } ) }
 				toggleOnSetAttributes={ [
@@ -272,12 +285,16 @@ addFilter( 'stackable.count-up.edit.inspector.style.before', 'stackable/count-up
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-description"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Description', i18n ) }
+				id="description"
 				checked={ showDescription }
 				onChange={ showDescription => setAttributes( { showDescription } ) }
 				toggleOnSetAttributes={ [
@@ -302,7 +319,10 @@ addFilter( 'stackable.count-up.edit.inspector.style.before', 'stackable/count-up
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-description"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
@@ -318,6 +338,7 @@ addFilter( 'stackable.count-up.edit.inspector.style.before', 'stackable/count-up
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-icon"
 						/>
 					</ResponsiveControl>
 				) }
@@ -332,6 +353,7 @@ addFilter( 'stackable.count-up.edit.inspector.style.before', 'stackable/count-up
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-title"
 						/>
 					</ResponsiveControl>
 				) }
@@ -346,6 +368,7 @@ addFilter( 'stackable.count-up.edit.inspector.style.before', 'stackable/count-up
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-description"
 						/>
 					</ResponsiveControl>
 				) }
@@ -360,6 +383,7 @@ addFilter( 'stackable.count-up.edit.inspector.style.before', 'stackable/count-up
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-description"
 						/>
 					</ResponsiveControl>
 				) }
@@ -478,4 +502,11 @@ export default compose(
 	withTabbedInspector(),
 	withContentAlignReseter( [ 'Icon%sAlign', 'Number%sAlign', 'Title%sAlign', 'Description%sAlign' ] ),
 	withBlockStyles( createStyles, { editorMode: true } ),
+	withClickOpenInspector( [
+		[ '.ugb-container__wrapper', 'column-background' ],
+		[ '.ugb-countup__icon svg', 'icon' ],
+		[ '.ugb-countup__title', 'title' ],
+		[ '.ugb-countup__counter', 'number' ],
+		[ '.ugb-countup__description', 'description' ],
+	] ),
 )( edit )

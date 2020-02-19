@@ -33,6 +33,7 @@ import {
 	withSetAttributeHook,
 	withTabbedInspector,
 	withUniqueClass,
+	withClickOpenInspector,
 } from '~stackable/higher-order'
 import classnames from 'classnames'
 import { i18n, showProNotice } from 'stackable'
@@ -127,12 +128,14 @@ addFilter( 'stackable.header.edit.inspector.style.before', 'stackable/header', (
 					label={ __( 'Full Height', i18n ) }
 					checked={ fullHeight }
 					onChange={ fullHeight => setAttributes( { fullHeight } ) }
+					className="ugb--help-tip-full-height"
 				/>
 				{ show.restrictContent &&
 					<ToggleControl
 						label={ __( 'Restrict to Content Width', i18n ) }
 						checked={ restrictContentWidth }
 						onChange={ restrictContentWidth => setAttributes( { restrictContentWidth } ) }
+						className="ugb--help-tip-general-restrict-content"
 					/>
 				}
 				{ show.borderRadius &&
@@ -144,6 +147,7 @@ addFilter( 'stackable.header.edit.inspector.style.before', 'stackable/header', (
 						max={ 50 }
 						allowReset={ true }
 						placeholder="12"
+						className="ugb--help-tip-general-border-radius"
 					/>
 				}
 				{ show.columnBackground &&
@@ -155,6 +159,7 @@ addFilter( 'stackable.header.edit.inspector.style.before', 'stackable/header', (
 						max={ 9 }
 						allowReset={ true }
 						placeholder="3"
+						className="ugb--help-tip-general-shadow"
 					/>
 				}
 				<ContentAlignControl
@@ -164,21 +169,24 @@ addFilter( 'stackable.header.edit.inspector.style.before', 'stackable/header', (
 			</PanelBody>
 
 			{ show.columnBackground &&
-				<PanelBody
+				<PanelAdvancedSettings
 					title={ __( 'Column Background', i18n ) }
 					initialOpen={ false }
+					id="column-background"
+					className="ugb--help-tip-column-background-on-off"
 				>
 					<BackgroundControlsHelper
 						attrNameTemplate="column%s"
 						setAttributes={ setAttributes }
 						blockAttributes={ props.attributes }
 					/>
-				</PanelBody>
+				</PanelAdvancedSettings>
 			}
 
 			{ show.overlayBackground &&
-				<PanelBody
+				<PanelAdvancedSettings
 					title={ __( 'Overlay Background', i18n ) }
+					id="overlay-background"
 					initialOpen={ false }
 				>
 					<ColorPaletteControl
@@ -195,12 +203,14 @@ addFilter( 'stackable.header.edit.inspector.style.before', 'stackable/header', (
 						step={ 0.1 }
 						allowReset={ true }
 						placeholder="1"
+						className="ugb--help-tip-background-color-opacity"
 					/>
-				</PanelBody>
+				</PanelAdvancedSettings>
 			}
 
 			<PanelAdvancedSettings
 				title={ __( 'Title', i18n ) }
+				id="title"
 				checked={ showTitle }
 				onChange={ showTitle => setAttributes( { showTitle } ) }
 				toggleOnSetAttributes={ [
@@ -230,12 +240,16 @@ addFilter( 'stackable.header.edit.inspector.style.before', 'stackable/header', (
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-title"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Subtitle', i18n ) }
+				id="subtitle"
 				checked={ showSubtitle }
 				onChange={ showSubtitle => setAttributes( { showSubtitle } ) }
 				toggleOnSetAttributes={ [
@@ -260,12 +274,16 @@ addFilter( 'stackable.header.edit.inspector.style.before', 'stackable/header', (
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-title"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ sprintf( _x( '%s #%d', 'Panel title', i18n ), __( 'Button', i18n ), 1 ) }
+				id="button1"
 				checked={ showButton }
 				onChange={ showButton => setAttributes( { showButton } ) }
 				toggleOnSetAttributes={ [
@@ -288,12 +306,14 @@ addFilter( 'stackable.header.edit.inspector.style.before', 'stackable/header', (
 					<AlignButtonsControl
 						label={ __( 'Align', i18n ) }
 						help={ __( 'This affects other buttons in this block', i18n ) }
+						className="ugb--help-tip-alignment-button"
 					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ sprintf( _x( '%s #%d', 'Panel title', i18n ), __( 'Button', i18n ), 2 ) }
+				id="button2"
 				checked={ showButton2 }
 				onChange={ showButton2 => setAttributes( { showButton2 } ) }
 				toggleOnSetAttributes={ [
@@ -314,6 +334,7 @@ addFilter( 'stackable.header.edit.inspector.style.before', 'stackable/header', (
 					<AlignButtonsControl
 						label={ __( 'Align', i18n ) }
 						help={ __( 'This affects other buttons in this block', i18n ) }
+						className="ugb--help-tip-alignment-button"
 					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
@@ -330,6 +351,7 @@ addFilter( 'stackable.header.edit.inspector.style.before', 'stackable/header', (
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-title"
 						/>
 					</ResponsiveControl>
 				) }
@@ -344,6 +366,7 @@ addFilter( 'stackable.header.edit.inspector.style.before', 'stackable/header', (
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-title"
 						/>
 					</ResponsiveControl>
 				) }
@@ -358,6 +381,7 @@ addFilter( 'stackable.header.edit.inspector.style.before', 'stackable/header', (
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-button"
 						/>
 					</ResponsiveControl>
 				) }
@@ -372,6 +396,7 @@ addFilter( 'stackable.header.edit.inspector.style.before', 'stackable/header', (
 							min={ 0 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-button-gap"
 						/>
 					</ResponsiveControl>
 				) }
@@ -495,4 +520,12 @@ export default compose(
 	withTabbedInspector(),
 	withContentAlignReseter( [ 'Title%sAlign', 'Subtitle%sAlign', 'Button%sAlign' ] ),
 	withBlockStyles( createStyles, { editorMode: true } ),
+	withClickOpenInspector( [
+		[ '.ugb-content-wrapper', 'overlay-background' ],
+		[ '.ugb-header__item', 'column-background' ],
+		[ '.ugb-header__title', 'title' ],
+		[ '.ugb-header__subtitle', 'subtitle' ],
+		[ '.ugb-button1', 'button1' ],
+		[ '.ugb-button2', 'button2' ],
+	] ),
 )( edit )

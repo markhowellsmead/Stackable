@@ -2,19 +2,19 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n'
+import { SelectControl } from '@wordpress/components'
+import { compose } from '@wordpress/compose'
 
 /**
  * External dependencies
  */
 import { i18n } from 'stackable'
-import { SelectControl } from '@wordpress/components'
+import { withHelpTip } from '~stackable/higher-order'
 
 const BlendModeControl = props => {
 	return (
 		<SelectControl
-			label={ props.label }
-			value={ props.value }
-			help={ props.help }
+			{ ...props }
 			options={ [
 				{ value: '', label: __( 'None', i18n ) },
 				{ value: 'normal', label: __( 'Normal', i18n ) },
@@ -37,16 +37,15 @@ const BlendModeControl = props => {
 				{ value: 'inherit', label: __( 'Inherit', i18n ) },
 				{ value: 'unset', label: __( 'Unset', i18n ) },
 			] }
-			onChange={ props.onChange }
 		/>
 	)
 }
 
 BlendModeControl.defaultProps = {
-	onChange: () => {},
-	value: '',
 	label: __( 'Mix Blend Mode', i18n ),
 	help: __( 'Not supported in all browsers.', i18n ),
 }
 
-export default BlendModeControl
+export default compose(
+	withHelpTip( 'background-blend-mode' )
+)( BlendModeControl )

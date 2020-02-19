@@ -257,7 +257,7 @@ const knowledgeBaseList = () => {
 				<br />
 				<span>{ __( 'Documentation & tutorials for building your site with Stackable.', i18n ) }</span>
 			</li>
-			{ isPro &&
+			{ isPro && contactURL &&
 				<li>
 					<span role="img" aria-label="envelope">✉️</span> <a href={ contactURL }><strong>{ __( 'Contact Email Support', i18n ) }</strong></a>
 					<br />
@@ -294,7 +294,7 @@ class HelpTabs extends Component {
 							title={ __( 'Video Tutorial', i18n ) }
 							width="560"
 							height="315"
-							src="https://www.youtube.com/embed/OR6wNum6mUg"
+							src="https://www.youtube.com/embed/UW0Rg96aATA"
 							frameBorder="0"
 							allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
 							allowFullScreen
@@ -319,7 +319,7 @@ class HelpTabs extends Component {
 							title={ __( 'Video Tutorial', i18n ) }
 							width="560"
 							height="315"
-							src="https://www.youtube.com/embed/OR6wNum6mUg"
+							src="https://www.youtube.com/embed/UW0Rg96aATA"
 							frameBorder="0"
 							allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
 							allowFullScreen

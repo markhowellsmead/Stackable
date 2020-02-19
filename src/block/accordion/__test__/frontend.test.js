@@ -8,7 +8,7 @@ import { initAll } from '../frontend'
  * External dependencies
  */
 import { getSavedBlockHTML } from '~stackable/test/helpers'
-import { fireEvent, getByText } from 'dom-testing-library'
+import { fireEvent, getByText } from '@testing-library/dom'
 
 describe( 'Accordion in frontend', () => {
 	const attributes = {
@@ -24,14 +24,14 @@ describe( 'Accordion in frontend', () => {
 		initAll()
 
 		const el = container.children[ 0 ]
-		expect( el.classList.contains( 'ugb-accordion--open' ) ).toBeFalsy()
+		expect( el ).not.toHaveClass( 'ugb-accordion--open' )
 		const title = getByText( container, /Accordion Title/ )
 
 		fireEvent.click( title )
-		expect( el.classList.contains( 'ugb-accordion--open' ) ).toBeTruthy()
+		expect( el ).toHaveClass( 'ugb-accordion--open' )
 
 		fireEvent.keyPress( title, { key: 'space' } )
-		expect( el.classList.contains( 'ugb-accordion--open' ) ).toBeFalsy()
+		expect( el ).not.toHaveClass( 'ugb-accordion--open' )
 	} )
 
 	// TODO: should have different aria labels

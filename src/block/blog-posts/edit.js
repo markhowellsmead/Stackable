@@ -39,6 +39,7 @@ import {
 	withTabbedInspector,
 	withContentAlignReseter,
 	withBlockStyles,
+	withClickOpenInspector,
 } from '~stackable/higher-order'
 import {
 	i18n, showProNotice,
@@ -54,7 +55,6 @@ import { dateI18n, format } from '@wordpress/date'
 import {
 	PanelBody,
 	Placeholder,
-	RangeControl,
 	Spinner,
 	TextControl,
 	ToggleControl,
@@ -150,12 +150,13 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 		<Fragment>
 			{ output }
 			<PanelBody title={ __( 'General', i18n ) }>
-				<RangeControl
+				<AdvancedRangeControl
 					label={ __( 'Columns', i18n ) }
 					value={ columns }
 					onChange={ columns => setAttributes( { columns } ) }
 					min={ 1 }
 					max={ 4 }
+					className="ugb--help-tip-general-columns"
 				/>
 				{ show.borderRadius &&
 					<AdvancedRangeControl
@@ -166,6 +167,7 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 						max={ 50 }
 						allowReset={ true }
 						placeholder="12"
+						className="ugb--help-tip-general-border-radius"
 					/>
 				}
 				{ show.shadow &&
@@ -177,6 +179,7 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 						max={ 9 }
 						allowReset={ true }
 						placeholder="3"
+						className="ugb--help-tip-general-shadow"
 					/>
 				}
 				<AdvancedSelectControl
@@ -192,6 +195,7 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 					] }
 					value={ contentOrder }
 					onChange={ contentOrder => setAttributes( { contentOrder } ) }
+					className="ugb--help-tip-posts-content-order"
 				/>
 				<ContentAlignControl
 					setAttributes={ setAttributes }
@@ -243,9 +247,11 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 			</PanelBody>
 
 			{ show.columnBackground &&
-				<PanelBody
+				<PanelAdvancedSettings
 					title={ __( 'Column Background', i18n ) }
+					id="column-background"
 					initialOpen={ false }
+					className="ugb--help-tip-column-background-on-off"
 				>
 					{ ( show.showBackgroundInItem || show.showBackgroundInContent ) &&
 						<BackgroundControlsHelper
@@ -265,11 +271,12 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 							onChangeBackgroundGradientBlendMode={ false }
 						/>
 					}
-				</PanelBody>
+				</PanelAdvancedSettings>
 			}
 
 			<PanelAdvancedSettings
 				title={ __( 'Featured Image', i18n ) }
+				id="image"
 				checked={ showImage }
 				onChange={ showImage => setAttributes( { showImage } ) }
 				toggleOnSetAttributes={ [
@@ -283,6 +290,7 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 					label={ __( 'Image Size', i18n ) }
 					value={ imageSize }
 					onChange={ imageSize => setAttributes( { imageSize } ) }
+					className="ugb--help-tip-image-size"
 				/>
 				{ show.imageWidth &&
 					<ResponsiveControl
@@ -295,6 +303,7 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 							min={ 100 }
 							max={ 600 }
 							allowReset={ true }
+							className="ugb--help-tip-image-width-crop"
 						/>
 					</ResponsiveControl>
 				}
@@ -309,6 +318,7 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 							min={ 100 }
 							max={ 1000 }
 							allowReset={ true }
+							className="ugb--help-tip-image-height-crop"
 						/>
 					</ResponsiveControl>
 				}
@@ -316,6 +326,7 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 
 			<PanelAdvancedSettings
 				title={ __( 'Category', i18n ) }
+				id="category"
 				checked={ showCategory }
 				onChange={ showCategory => setAttributes( { showCategory } ) }
 				toggleOnSetAttributes={ [
@@ -352,12 +363,16 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-description"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Title', i18n ) }
+				id="title"
 				checked={ showTitle }
 				onChange={ showTitle => setAttributes( { showTitle } ) }
 				toggleOnSetAttributes={ [
@@ -393,12 +408,16 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-title"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Excerpt', i18n ) }
+				id="excerpt"
 				checked={ showExcerpt }
 				onChange={ showExcerpt => setAttributes( { showExcerpt } ) }
 				toggleOnSetAttributes={ [
@@ -433,12 +452,16 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-description"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Meta', i18n ) }
+				id="meta"
 				checked={ showMeta }
 				onChange={ showMeta => setAttributes( { showMeta } ) }
 				toggleOnSetAttributes={ [
@@ -488,18 +511,23 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 					] }
 					value={ metaSeparator }
 					onChange={ metaSeparator => setAttributes( { metaSeparator } ) }
+					className="ugb--help-tip-posts-meta-separator"
 				/>
 				<ResponsiveControl
 					attrNameTemplate="Meta%sAlign"
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-description"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Read More Link', i18n ) }
+				id="readmore"
 				checked={ showReadmore }
 				onChange={ showReadmore => setAttributes( { showReadmore } ) }
 				toggleOnSetAttributes={ [
@@ -537,7 +565,10 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-button"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
@@ -556,6 +587,7 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-alignment-image"
 						/>
 					</ResponsiveControl>
 				}
@@ -570,6 +602,7 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-alignment-description"
 						/>
 					</ResponsiveControl>
 				}
@@ -584,6 +617,7 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-alignment-title"
 						/>
 					</ResponsiveControl>
 				}
@@ -598,6 +632,7 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-alignment-description"
 						/>
 					</ResponsiveControl>
 				}
@@ -612,6 +647,7 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-alignment-description"
 						/>
 					</ResponsiveControl>
 				}
@@ -626,6 +662,7 @@ addFilter( 'stackable.blog-posts.edit.inspector.style.before', 'stackable/blog-p
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-alignment-button"
 						/>
 					</ResponsiveControl>
 				}
@@ -734,7 +771,7 @@ class Edit extends Component {
 						</TitleTag>
 
 						const category = post.category_list &&
-							<div className="ugb-blog-posts__category" dangerouslySetInnerHTML={ { __html: post.category_list } } />
+							<div className="ugb-blog-posts__category" dangerouslySetInnerHTML={ { __html: post.category_list.replace( /href=['"].*?['"]/g, '' ) } } />
 
 						const separator = <span className="ugb-blog-posts__sep">{ META_SEPARATORS[ metaSeparator || 'dot' ] }</span>
 
@@ -833,6 +870,17 @@ export default compose(
 	withTabbedInspector(),
 	withContentAlignReseter( [ 'Category%sAlign', 'Title%sAlign', 'Excerpt%sAlign', 'Meta%sAlign', 'Readmore%sAlign' ] ),
 	withBlockStyles( createStyles, { editorMode: true } ),
+	withClickOpenInspector( [
+		[ '.ugb-blog-posts__featured-image', 'image' ],
+		[ '.ugb-blog-posts__featured-image img', 'image' ],
+		[ '.ugb-blog-posts__category', 'category' ],
+		[ '.ugb-blog-posts__title', 'title' ],
+		[ '.ugb-blog-posts__excerpt', 'excerpt' ],
+		[ '.ugb-blog-posts__meta', 'meta' ],
+		[ '.ugb-blog-posts__readmore', 'readmore' ],
+		[ '.ugb-blog-posts--design-image-card .ugb-blog-posts__header', 'image' ],
+		[ '.ugb-blog-posts__item', 'column-background' ],
+	] ),
 	withSelect( ( select, props ) => {
 		const {
 			postType = 'post',
@@ -858,3 +906,24 @@ export default compose(
 		}
 	} ),
 )( Edit )
+
+addFilter( 'stackable.click-open-inspector.listener-override', 'stackable/blog-posts', override => {
+	return {
+		...override,
+		'[data-type="ugb/blog-posts"]': [
+			'img',
+			'p',
+			'h1',
+			'h2',
+			'h3',
+			'h4',
+			'h5',
+			'h6',
+			'span',
+			'time',
+			'aside',
+			'figure',
+			'div',
+		],
+	}
+} )

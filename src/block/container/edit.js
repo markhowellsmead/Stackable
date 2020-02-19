@@ -23,6 +23,7 @@ import {
 	BackgroundControlsHelper,
 	ColorPaletteControl,
 	DivBackground,
+	PanelAdvancedSettings,
 } from '~stackable/components'
 import {
 	withUniqueClass,
@@ -31,6 +32,7 @@ import {
 	withTabbedInspector,
 	withContentAlignReseter,
 	withBlockStyles,
+	withClickOpenInspector,
 } from '~stackable/higher-order'
 import { cacheImageData } from '~stackable/util'
 import classnames from 'classnames'
@@ -164,6 +166,7 @@ addFilter( 'stackable.container.edit.inspector.style.before', 'stackable/contain
 						label={ __( 'Restrict to Content Width', i18n ) }
 						checked={ restrictContentWidth }
 						onChange={ restrictContentWidth => setAttributes( { restrictContentWidth } ) }
+						className="ugb--help-tip-general-restrict-content"
 					/>
 				}
 				<ResponsiveControl
@@ -222,6 +225,7 @@ addFilter( 'stackable.container.edit.inspector.style.before', 'stackable/contain
 						max={ 50 }
 						allowReset={ true }
 						placeholder="12"
+						className="ugb--help-tip-general-border-radius"
 					/>
 				}
 				{ show.columnBackground &&
@@ -233,6 +237,7 @@ addFilter( 'stackable.container.edit.inspector.style.before', 'stackable/contain
 						max={ 9 }
 						allowReset={ true }
 						placeholder="3"
+						className="ugb--help-tip-general-shadow"
 					/>
 				}
 				<ContentAlignControl
@@ -242,16 +247,18 @@ addFilter( 'stackable.container.edit.inspector.style.before', 'stackable/contain
 			</PanelBody>
 
 			{ show.columnBackground &&
-				<PanelBody
+				<PanelAdvancedSettings
 					title={ __( 'Container Background', i18n ) }
+					id="column-background"
 					initialOpen={ false }
+					className="ugb--help-tip-column-background-on-off"
 				>
 					<BackgroundControlsHelper
 						attrNameTemplate="column%s"
 						setAttributes={ setAttributes }
 						blockAttributes={ props.attributes }
 					/>
-				</PanelBody>
+				</PanelAdvancedSettings>
 			}
 
 			{ applyFilters( 'stackable.container.edit.inspector.style.column-background.after', null, props ) }
@@ -355,6 +362,9 @@ export default compose(
 	withTabbedInspector(),
 	withContentAlignReseter(),
 	withBlockStyles( createStyles, { editorMode: true } ),
+	withClickOpenInspector( [
+		[ '.ugb-container__wrapper', 'column-background' ],
+	] ),
 	withSelect( ( select, { clientId } ) => {
 		const {
 			getBlock,

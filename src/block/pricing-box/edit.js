@@ -47,6 +47,7 @@ import {
 	withTabbedInspector,
 	withContentAlignReseter,
 	withBlockStyles,
+	withClickOpenInspector,
 } from '~stackable/higher-order'
 import { i18n, showProNotice } from 'stackable'
 import { range } from 'lodash'
@@ -58,10 +59,7 @@ import {
 	addFilter,
 	applyFilters,
 } from '@wordpress/hooks'
-import {
-	PanelBody,
-	RangeControl,
-} from '@wordpress/components'
+import { PanelBody } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import { RichText } from '@wordpress/block-editor'
 import { Fragment } from '@wordpress/element'
@@ -131,12 +129,13 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 		<Fragment>
 			{ output }
 			<PanelBody title={ __( 'General', i18n ) }>
-				<RangeControl
+				<AdvancedRangeControl
 					label={ __( 'Columns', i18n ) }
 					value={ columns }
 					onChange={ columns => setAttributes( { columns } ) }
 					min={ 1 }
 					max={ 3 }
+					className="ugb--help-tip-general-columns"
 				/>
 				{ show.borderRadius &&
 					<AdvancedRangeControl
@@ -147,6 +146,7 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 						max={ 50 }
 						allowReset={ true }
 						placeholder="12"
+						className="ugb--help-tip-general-border-radius"
 					/>
 				}
 				{ show.shadow &&
@@ -158,6 +158,7 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 						max={ 9 }
 						allowReset={ true }
 						placeholder="3"
+						className="ugb--help-tip-general-shadow"
 					/>
 				}
 				<ContentAlignControl
@@ -169,16 +170,18 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 			{ applyFilters( 'stackable.pricing-box.edit.inspector.style.general.after', null, props ) }
 
 			{ show.columnBackground &&
-				<PanelBody
+				<PanelAdvancedSettings
 					title={ __( 'Column Background', i18n ) }
+					id="column-background"
 					initialOpen={ false }
+					className="ugb--help-tip-column-background-on-off"
 				>
 					<BackgroundControlsHelper
 						attrNameTemplate="column%s"
 						setAttributes={ setAttributes }
 						blockAttributes={ props.attributes }
 					/>
-				</PanelBody>
+				</PanelAdvancedSettings>
 			}
 
 			{ applyFilters( 'stackable.pricing-box.edit.inspector.style.column.after', null, props ) }
@@ -224,13 +227,17 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 						setAttributes={ setAttributes }
 						blockAttributes={ props.attributes }
 					>
-						<AlignButtonsControl label={ __( 'Align', i18n ) } />
+						<AlignButtonsControl
+							label={ __( 'Align', i18n ) }
+							className="ugb--help-tip-pricing-image-align"
+						/>
 					</ResponsiveControl>
 				</PanelAdvancedSettings>
 			}
 
 			<PanelAdvancedSettings
 				title={ __( 'Title', i18n ) }
+				id="title"
 				checked={ showTitle }
 				onChange={ showTitle => setAttributes( { showTitle } ) }
 				toggleOnSetAttributes={ [
@@ -260,12 +267,16 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-pricing-title-align"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Price', i18n ) }
+				id="price"
 				checked={ showPrice }
 				onChange={ showPrice => setAttributes( { showPrice } ) }
 				toggleOnSetAttributes={ [
@@ -290,13 +301,17 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-pricing-price-align"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			{ showPrice &&
 				<PanelAdvancedSettings
 					title={ __( 'Price Prefix', i18n ) }
+					id="price-prefix"
 					checked={ showPricePrefix }
 					onChange={ showPricePrefix => setAttributes( { showPricePrefix } ) }
 					toggleOnSetAttributes={ [
@@ -324,6 +339,7 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 			{ showPrice &&
 				<PanelAdvancedSettings
 					title={ __( 'Price Suffix', i18n ) }
+					id="price-suffix"
 					checked={ showPriceSuffix }
 					onChange={ showPriceSuffix => setAttributes( { showPriceSuffix } ) }
 					toggleOnSetAttributes={ [
@@ -350,6 +366,7 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 
 			<PanelAdvancedSettings
 				title={ __( 'Sub Price', i18n ) }
+				id="subprice"
 				checked={ showSubPrice }
 				onChange={ showSubPrice => setAttributes( { showSubPrice } ) }
 				toggleOnSetAttributes={ [
@@ -374,12 +391,16 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-pricing-subprice-align"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Button', i18n ) }
+				id="button"
 				checked={ showButton }
 				onChange={ showButton => setAttributes( { showButton } ) }
 				toggleOnSetAttributes={ [
@@ -403,12 +424,14 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 				>
 					<AlignButtonsControl
 						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-pricing-button-align"
 					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Description', i18n ) }
+				id="description"
 				checked={ showDescription }
 				onChange={ showDescription => setAttributes( { showDescription } ) }
 				toggleOnSetAttributes={ [
@@ -433,7 +456,10 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-pricing-button-align"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
@@ -449,6 +475,7 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-pricing-image-spacing"
 						/>
 					</ResponsiveControl>
 				}
@@ -463,6 +490,7 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-pricing-title-spacing"
 						/>
 					</ResponsiveControl>
 				) }
@@ -477,6 +505,7 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-pricing-price-spacing"
 						/>
 					</ResponsiveControl>
 				) }
@@ -491,6 +520,7 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-pricing-subprice-spacing"
 						/>
 					</ResponsiveControl>
 				) }
@@ -505,6 +535,7 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-pricing-button-spacing"
 						/>
 					</ResponsiveControl>
 				) }
@@ -519,6 +550,7 @@ addFilter( 'stackable.pricing-box.edit.inspector.style.before', 'stackable/prici
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-pricing-description-spacing"
 						/>
 					</ResponsiveControl>
 				) }
@@ -780,6 +812,17 @@ export default compose(
 	withTabbedInspector(),
 	withContentAlignReseter( [ 'Image%sAlign', 'Title%sAlign', 'Price%sAlign', 'SubPrice%sAlign', 'Button%sAlign', 'Description%sAlign' ] ),
 	withBlockStyles( createStyles, { editorMode: true } ),
+	withClickOpenInspector( [
+		[ '.ugb-pricing-box__header', 'column-header' ],
+		[ '.ugb-pricing-box__item', 'column-background' ],
+		[ '.ugb-pricing-box__title', 'title' ],
+		[ '.ugb-pricing-box__price-prefix', 'price-prefix' ],
+		[ '.ugb-pricing-box__price', 'price' ],
+		[ '.ugb-pricing-box__price-suffix', 'price-suffix' ],
+		[ '.ugb-pricing-box__subprice', 'subprice' ],
+		[ '.ugb-button', 'button' ],
+		[ '.ugb-pricing-box__description', 'description' ],
+	] ),
 	withSelect( ( select, props ) => {
 		// Once the editor is loaded, cache the other sizes of the image.
 		cacheImageData( props.attributes.image1Id, select )

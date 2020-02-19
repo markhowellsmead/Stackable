@@ -2,11 +2,11 @@
 /**
  * Plugin Name: Stackable - Gutenberg Blocks
  * Plugin URI: https://wpstackable.com
- * Description: An Amazing Block Collection That Lets You Reimagine the Way You Use the WordPress Block Editor (Gutenberg).
+ * Description: An Amazing Block Library That Lets You Reimagine the Way You Use the WordPress Block Editor (Gutenberg).
  * Author: Gambit Technologies, Inc
  * Author URI: http://gambit.ph
  * Text Domain: stackable-ultimate-gutenberg-blocks
- * Version: 2.0.2
+ * Version: 2.2.1
  *
  * @package Stackable
  */
@@ -23,9 +23,10 @@ if ( function_exists( 'sugb_fs' ) ) {
 }
 
 defined( 'STACKABLE_SHOW_PRO_NOTICES' ) || define( 'STACKABLE_SHOW_PRO_NOTICES', true );
-defined( 'STACKABLE_VERSION' ) || define( 'STACKABLE_VERSION', '2.0.2' );
+defined( 'STACKABLE_VERSION' ) || define( 'STACKABLE_VERSION', '2.2.1' );
 defined( 'STACKABLE_FILE' ) || define( 'STACKABLE_FILE', __FILE__ );
 defined( 'STACKABLE_I18N' ) || define( 'STACKABLE_I18N', 'stackable-ultimate-gutenberg-blocks' ); // Plugin slug.
+defined( 'STACKABLE_CLOUDFRONT_URL' ) || define( 'STACKABLE_CLOUDFRONT_URL', 'https://d3gt1urn7320t9.cloudfront.net' ); // CloudFront CDN URL
 
 /********************************************************************************************
  * Activation & PHP version checks.
@@ -117,6 +118,9 @@ require_once( plugin_dir_path( __FILE__ ) . 'src/init.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'src/fonts.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'src/block/blog-posts/index.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'src/pro.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'src/help/welcome-tutorial-video.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'src/jetpack.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'src/design-library/init.php' );
 
 /**
  * Welcome screen.

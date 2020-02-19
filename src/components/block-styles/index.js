@@ -62,28 +62,52 @@ export const combineStyleRules = styleObject => {
  *
  * @return {string} Minified CSS string
  */
-const generateStyles = ( styleObject, blockMainClassName = '', blockUniqueClassName = '', breakTablet = 1025, breakMobile = 768, editorMode = false ) => {
+export const generateStyles = ( styleObject, blockMainClassName = '', blockUniqueClassName = '', breakTablet = 1025, breakMobile = 768, editorMode = false ) => {
 	const styleStrings = []
 
-	const desktopStyles = omit( styleObject, [ 'tablet', 'mobile', 'editor' ] )
+	const desktopStyles = omit( styleObject, [ 'desktopTablet', 'desktopOnly', 'tablet', 'tabletOnly', 'mobile', 'editor' ] )
 	if ( Object.keys( desktopStyles ).length ) {
 		const cleanedStyles = addBlockClassNames( desktopStyles, blockMainClassName, blockUniqueClassName, editorMode )
 		styleStrings.push( combineStyleRules( cleanedStyles ) )
 	}
 
+	if ( typeof styleObject.desktopTablet !== 'undefined' ) {
+		const cleanedStyles = addBlockClassNames( styleObject.desktopTablet, blockMainClassName, blockUniqueClassName, editorMode )
+		const styleString = combineStyleRules( cleanedStyles )
+		if ( styleString ) {
+			styleStrings.push( `\n@media screen and (min-width: ${ breakMobile }px) {\n${ styleString } }` )
+		}
+	}
+
+	if ( typeof styleObject.desktopOnly !== 'undefined' ) {
+		const cleanedStyles = addBlockClassNames( styleObject.desktopOnly, blockMainClassName, blockUniqueClassName, editorMode )
+		const styleString = combineStyleRules( cleanedStyles )
+		if ( styleString ) {
+			styleStrings.push( `\n@media screen and (min-width: ${ breakTablet }px) {\n${ styleString } }` )
+		}
+	}
+
 	if ( typeof styleObject.tablet !== 'undefined' ) {
 		const cleanedStyles = addBlockClassNames( styleObject.tablet, blockMainClassName, blockUniqueClassName, editorMode )
-		const tabletStyleString = combineStyleRules( cleanedStyles )
-		if ( tabletStyleString ) {
-			styleStrings.push( `\n@media screen and (max-width: ${ breakTablet }px) {\n${ tabletStyleString } }` )
+		const styleString = combineStyleRules( cleanedStyles )
+		if ( styleString ) {
+			styleStrings.push( `\n@media screen and (max-width: ${ breakTablet }px) {\n${ styleString } }` )
+		}
+	}
+
+	if ( typeof styleObject.tabletOnly !== 'undefined' ) {
+		const cleanedStyles = addBlockClassNames( styleObject.tabletOnly, blockMainClassName, blockUniqueClassName, editorMode )
+		const styleString = combineStyleRules( cleanedStyles )
+		if ( styleString ) {
+			styleStrings.push( `\n@media screen and (min-width: ${ breakMobile }px) and (max-width: ${ breakTablet }px) {\n${ styleString } }` )
 		}
 	}
 
 	if ( typeof styleObject.mobile !== 'undefined' ) {
 		const cleanedStyles = addBlockClassNames( styleObject.mobile, blockMainClassName, blockUniqueClassName, editorMode )
-		const mobileStyleString = combineStyleRules( cleanedStyles )
-		if ( mobileStyleString ) {
-			styleStrings.push( `\n@media screen and (max-width: ${ breakMobile }px) {\n${ mobileStyleString } }` )
+		const styleString = combineStyleRules( cleanedStyles )
+		if ( styleString ) {
+			styleStrings.push( `\n@media screen and (max-width: ${ breakMobile }px) {\n${ styleString } }` )
 		}
 	}
 

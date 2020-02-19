@@ -103,6 +103,8 @@ if ( ! function_exists( 'stackable_block_editor_assets' ) ) {
 			'disabledBlocks' => stackable_get_disabled_blocks(),
 			'nonce' => wp_create_nonce( 'stackable' ),
 			'devMode' => defined( 'WP_ENV' ) ? WP_ENV === 'development' : false,
+			'cdnUrl' => STACKABLE_CLOUDFRONT_URL,
+			'displayWelcomeVideo' => function_exists( 'stackable_display_welcome_video' ) ? stackable_display_welcome_video() : false,
 
 			// Fonts.
 			'locale' => get_locale(),

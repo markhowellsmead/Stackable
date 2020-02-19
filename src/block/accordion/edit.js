@@ -34,6 +34,7 @@ import {
 	withSetAttributeHook,
 	withTabbedInspector,
 	withUniqueClass,
+	withClickOpenInspector,
 } from '~stackable/higher-order'
 import { descriptionPlaceholder } from '~stackable/util'
 import { i18n, showProNotice } from 'stackable'
@@ -113,9 +114,10 @@ addFilter( 'stackable.accordion.edit.inspector.style.before', 'stackable/accordi
 			{ output }
 			<PanelBody title={ __( 'General', i18n ) }>
 				<ToggleControl
-					label={ __( 'Close adjacent accordions when this opens', i18n ) }
+					label={ __( 'Close adjacent on open', i18n ) }
 					checked={ onlyOnePanelOpen }
 					onChange={ onlyOnePanelOpen => setAttributes( { onlyOnePanelOpen } ) }
+					className="ugb--help-tip-accordion-adjacent-open"
 				/>
 				<ToggleControl
 					label={ __( 'Open at the start', i18n ) }
@@ -136,6 +138,7 @@ addFilter( 'stackable.accordion.edit.inspector.style.before', 'stackable/accordi
 						max={ 50 }
 						allowReset={ true }
 						placeholder="12"
+						className="ugb--help-tip-general-border-radius"
 					/>
 				}
 				{ ( show.headerBackground || show.containerBackground ) &&
@@ -147,6 +150,7 @@ addFilter( 'stackable.accordion.edit.inspector.style.before', 'stackable/accordi
 						max={ 9 }
 						allowReset={ true }
 						placeholder="3"
+						className="ugb--help-tip-general-shadow"
 					/>
 				}
 				<ContentAlignControl
@@ -156,8 +160,9 @@ addFilter( 'stackable.accordion.edit.inspector.style.before', 'stackable/accordi
 			</PanelBody>
 
 			{ ( show.headerBackground || show.containerBackground ) &&
-				<PanelBody
+				<PanelAdvancedSettings
 					title={ __( 'Container Background', i18n ) }
+					id="column-background"
 					initialOpen={ false }
 				>
 					<BackgroundControlsHelper
@@ -170,13 +175,15 @@ addFilter( 'stackable.accordion.edit.inspector.style.before', 'stackable/accordi
 							value={ containerClosedBackgroundColor }
 							onChange={ containerClosedBackgroundColor => setAttributes( { containerClosedBackgroundColor } ) }
 							label={ __( 'Closed State Background Color', i18n ) }
+							className="ugb--help-tip-accordion-closed-state-background-color"
 						/>
 					}
-				</PanelBody>
+				</PanelAdvancedSettings>
 			}
 
 			<PanelAdvancedSettings
 				title={ __( 'Title', i18n ) }
+				id="title"
 				hasToggle={ false }
 			>
 				<TypographyControlHelper
@@ -198,12 +205,16 @@ addFilter( 'stackable.accordion.edit.inspector.style.before', 'stackable/accordi
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-title"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Arrow', i18n ) }
+				id="arrow"
 				checked={ showArrow }
 				onChange={ showArrow => setAttributes( { showArrow } ) }
 				toggleOnSetAttributes={ [
@@ -238,6 +249,7 @@ addFilter( 'stackable.accordion.edit.inspector.style.before', 'stackable/accordi
 						'borderColor',
 					] }
 					toggleAttributeName="showBorder"
+					className="ugb--help-tip-accordion-border"
 				>
 					<AdvancedRangeControl
 						label={ __( 'Size', i18n ) }
@@ -247,6 +259,7 @@ addFilter( 'stackable.accordion.edit.inspector.style.before', 'stackable/accordi
 						value={ borderSize }
 						onChange={ borderSize => setAttributes( { borderSize } ) }
 						placeholder="3"
+						className="ugb--help-tip-accordion-border-size"
 					/>
 					<ColorPaletteControl
 						value={ borderColor }
@@ -274,6 +287,7 @@ addFilter( 'stackable.accordion.edit.inspector.style.before', 'stackable/accordi
 							containerPaddingLeft: paddings.left,
 						} ) }
 						max={ 200 }
+						className="ugb--help-tip-accordion-padding"
 					/>
 				}
 				{ show.titleSpacing &&
@@ -288,6 +302,7 @@ addFilter( 'stackable.accordion.edit.inspector.style.before', 'stackable/accordi
 							max={ 100 }
 							allowReset={ true }
 							placeholder="0"
+							className="ugb--help-tip-accordion-title-spacing"
 						/>
 					</ResponsiveControl>
 				}
@@ -347,8 +362,26 @@ const edit = props => {
 						backgroundAttrName="container%s"
 						blockProps={ props }
 						showBackground={ show.headerBackground }
-						onMouseUp={ () => props.setState( { isOpen: ! props.isOpen } ) }
-						onKeyPress={ () => props.setState( { isOpen: ! openStart } ) }
+						onClick={ () => {
+							if ( props.openTimeout ) {
+								clearTimeout( props.openTimeout )
+							}
+							const newOpenTimeout = setTimeout( () => {
+								props.setState( { isOpen: ! props.isOpen } )
+							}, 150 )
+							props.setState( { openTimeout: newOpenTimeout } )
+						} }
+						onDoubleClick={ () => {
+							if ( props.openTimeout ) {
+								clearTimeout( props.openTimeout )
+							}
+						} }
+						onKeyPress={ () => {
+							if ( props.openTimeout ) {
+								clearTimeout( props.openTimeout )
+							}
+							props.setState( { isOpen: ! openStart } )
+						} }
 						role="button"
 						tabIndex="0"
 					>
@@ -385,6 +418,10 @@ export default compose(
 	withTabbedInspector(),
 	withContentAlignReseter(),
 	withBlockStyles( createStyles, { editorMode: true } ),
+	withClickOpenInspector( [
+		[ '.ugb-accordion__title', 'title' ],
+		[ '.ugb-accordion__arrow', 'arrow' ],
+	] ),
 	withSelect( ( select, { clientId } ) => {
 		const {
 			getBlock,
@@ -397,6 +434,7 @@ export default compose(
 		}
 	} ),
 	withState( {
+		openTimeout: null,
 		isOpen: null,
 	} )
 )( edit )

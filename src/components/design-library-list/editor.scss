@@ -1,0 +1,144 @@
+.ugb-design-library-items {
+	page-break-inside: avoid;
+	break-inside: avoid;
+	column-count: 1;
+	column-gap: 18px;
+	&.ugb-design-library-items--columns-2 {
+		column-count: 2;
+	}
+	&.ugb-design-library-items--columns-3 {
+		column-count: 3;
+	}
+	&.ugb-design-library-items--columns-4 {
+		column-count: 4;
+	}
+
+	.components-base-control__help {
+		text-align: center;
+		font-style: italic;
+	}
+	.ugb-design-library-search__spinner {
+		display: flex;
+		.components-spinner {
+			margin: 0 auto;
+		}
+	}
+}
+.ugb-modal-design-library__wrapper {
+	overflow: hidden;
+}
+.ugb-modal-design-library__designs {
+	overflow: auto;
+}
+.ugb-design-library-item {
+	border-radius: 4px;
+	box-shadow: 0px 2px 15px rgba(153, 153, 153, 0.3);
+	overflow: hidden;
+	transition: all 0.3s ease-in-out;
+	position: relative;
+	margin-bottom: 12px;
+	display: block; // Block or else the list will display a few results in a single vertical line.
+	transform: translateZ(0); // Fixes box shadow being cut by columns.
+	break-inside: avoid;
+	width: 100%;
+	will-change: transform; // This fixes the flickering during hover transition.
+	&:hover {
+		transform: translateY(-4px) scale(1.03);
+		box-shadow: 0 6px 25px rgba(153, 153, 153, 0.3);
+	}
+	img {
+		display: block;
+		pointer-events: none; // Prevent dragging the image.
+		width: 100%;
+		height: auto;
+		min-height: 100px;
+		background: #f1f1f1;
+	}
+	footer {
+		padding: 8px 12px;
+		font-size: 11px;
+		line-height: 18px;
+		display: flex;
+		justify-content: space-between;
+	}
+	&.ugb--is-busy {
+		.ugb-design-library-item__spinner {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%) translateY(-10px);
+		}
+		.components-spinner {
+			margin: 0;
+		}
+		img {
+			opacity: 0.15;
+		}
+	}
+}
+.ugb-design-library-item__image {
+	padding: 0 !important;
+	border: 0 !important;
+	text-align: start !important;
+	width: 100% !important;
+	margin: 0 !important;
+	outline: none !important;
+	cursor: pointer;
+	display: block;
+}
+
+.ugb-design-library-item__premium {
+	position: absolute;
+	z-index: 1;
+	background: #f34957;
+	font-size: 10px;
+	color: #fff;
+	line-height: 18px;
+	padding: 0 6px;
+	border-radius: 2px;
+	top: 5px;
+	right: 5px;
+	text-transform: uppercase;
+}
+
+.ugb-design-library-item__premium-link {
+	cursor: pointer;
+	display: flex;
+	svg {
+		height: 15px;
+		margin-right: 5px;
+	}
+}
+
+.ugb-design-library-item__favorite {
+	border: 0;
+	padding: 0;
+	cursor: pointer;
+	outline: none;
+	transition: all 0.3 ease-in-out;
+	svg {
+		fill: #bbb;
+		height: 14px;
+		width: 14px;
+	}
+	&:hover {
+		svg {
+			fill: #d30c5c;
+		}
+	}
+
+	&.ugb--is-favorite {
+		&,
+		&:hover {
+			svg {
+				fill: #d30c5c;
+			}
+		}
+	}
+
+	// &.ugb--is-busy {
+	// 	svg {
+	// 		opacity: 0.3;
+	// 	}
+	// }
+}

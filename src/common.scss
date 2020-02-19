@@ -116,7 +116,7 @@ $shadows: ( none )
 }
 
 // Make sure all our blocks are at the same level. Mainly for our separator to work.
-div[class^="wp-block-"] {
+div[class^="wp-block-ugb-"] {
 	z-index: 1;
 }
 
@@ -128,4 +128,10 @@ div[class^="wp-block-"] {
 	[class*="ugb-"][style*="background-attachment: fixed"] {
 		background-attachment: scroll !important;
 	}
+}
+
+// Some themes may force pseudo elements on our blocks and this will destroy our column layouts.
+.ugb-block-content::before,
+.ugb-block-content::after {
+	content: none !important;
 }

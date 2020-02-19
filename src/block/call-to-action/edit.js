@@ -33,6 +33,7 @@ import {
 	withSetAttributeHook,
 	withTabbedInspector,
 	withUniqueClass,
+	withClickOpenInspector,
 } from '~stackable/higher-order'
 import { i18n, showProNotice } from 'stackable'
 import classnames from 'classnames'
@@ -111,6 +112,7 @@ addFilter( 'stackable.cta.edit.inspector.style.before', 'stackable/cta', ( outpu
 						max={ 50 }
 						allowReset={ true }
 						placeholder="12"
+						className="ugb--help-tip-general-border-radius"
 					/>
 				}
 				{ show.columnBackground &&
@@ -122,6 +124,7 @@ addFilter( 'stackable.cta.edit.inspector.style.before', 'stackable/cta', ( outpu
 						max={ 9 }
 						allowReset={ true }
 						placeholder="3"
+						className="ugb--help-tip-general-shadow"
 					/>
 				}
 				<ContentAlignControl
@@ -131,20 +134,23 @@ addFilter( 'stackable.cta.edit.inspector.style.before', 'stackable/cta', ( outpu
 			</PanelBody>
 
 			{ show.columnBackground &&
-				<PanelBody
+				<PanelAdvancedSettings
 					title={ __( 'Column Background', i18n ) }
 					initialOpen={ false }
+					id="column-background"
+					className="ugb--help-tip-column-background-on-off"
 				>
 					<BackgroundControlsHelper
 						attrNameTemplate="column%s"
 						setAttributes={ setAttributes }
 						blockAttributes={ props.attributes }
 					/>
-				</PanelBody>
+				</PanelAdvancedSettings>
 			}
 
 			<PanelAdvancedSettings
 				title={ __( 'Title', i18n ) }
+				id="title"
 				checked={ showTitle }
 				onChange={ showTitle => setAttributes( { showTitle } ) }
 				toggleOnSetAttributes={ [
@@ -159,6 +165,7 @@ addFilter( 'stackable.cta.edit.inspector.style.before', 'stackable/cta', ( outpu
 					attrNameTemplate="title%s"
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
+					className="ugb--help-tip-typography-family"
 				/>
 				<HeadingButtonsControl
 					value={ titleTag || 'h3' }
@@ -174,12 +181,16 @@ addFilter( 'stackable.cta.edit.inspector.style.before', 'stackable/cta', ( outpu
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-title"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Description', i18n ) }
+				id="description"
 				checked={ showDescription }
 				onChange={ showDescription => setAttributes( { showDescription } ) }
 				toggleOnSetAttributes={ [
@@ -204,12 +215,16 @@ addFilter( 'stackable.cta.edit.inspector.style.before', 'stackable/cta', ( outpu
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-description"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Button', i18n ) }
+				id="button"
 				checked={ showButton }
 				onChange={ showButton => setAttributes( { showButton } ) }
 				toggleOnSetAttributes={ [
@@ -229,7 +244,10 @@ addFilter( 'stackable.cta.edit.inspector.style.before', 'stackable/cta', ( outpu
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-button"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
@@ -248,6 +266,7 @@ addFilter( 'stackable.cta.edit.inspector.style.before', 'stackable/cta', ( outpu
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-title"
 						/>
 					</ResponsiveControl>
 				}
@@ -262,6 +281,7 @@ addFilter( 'stackable.cta.edit.inspector.style.before', 'stackable/cta', ( outpu
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-description"
 						/>
 					</ResponsiveControl>
 				}
@@ -276,6 +296,7 @@ addFilter( 'stackable.cta.edit.inspector.style.before', 'stackable/cta', ( outpu
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-button"
 						/>
 					</ResponsiveControl>
 				}
@@ -380,4 +401,9 @@ export default compose(
 	withTabbedInspector(),
 	withContentAlignReseter( [ 'Title%sAlign', 'Description%sAlign', 'Button%sAlign' ] ),
 	withBlockStyles( createStyles, { editorMode: true } ),
+	withClickOpenInspector( [
+		[ '.ugb-cta__title', 'title' ],
+		[ '.ugb-cta__description', 'description' ],
+		[ '.ugb-button', 'button' ],
+	] )
 )( edit )

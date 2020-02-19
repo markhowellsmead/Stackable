@@ -40,4 +40,34 @@ module.exports = [
 			},
 		],
 	},
+	// Help video snippets
+	{
+		test: /help\/videos\/[\w\d-_]+\.(mp4)$/,
+		use: [
+			{
+				loader: 'file-loader',
+				options: {
+					outputPath: 'videos/help', // Dump images in dist/videos/help.
+					publicPath: 'dist/videos/help', // URLs point to dist/videos/help.
+					regExp: /\/videos\/(.+)\.(.*)?$/, // Gather strings for the output filename.
+					name: '[1].[ext]', // Filename e.g. borders.mp4
+				},
+			},
+		],
+	},
+	{
+		test: /\.(mp4)$/,
+		exclude: /(help\/videos)/,
+		use: [
+			{
+				loader: 'file-loader',
+				options: {
+					outputPath: 'videos', // Dump images in dist/images.
+					publicPath: 'dist/videos', // URLs point to dist/images.
+					regExp: /\/([^\/]+)\/([^\/]+)\/videos\/(.+)\.(.*)?$/, // Gather strings for the output filename.
+					name: '[2]-[3].[hash:hex:7].[ext]', // Filename e.g. help-borders.1b659fc.mp4
+				},
+			},
+		],
+	},
 ]

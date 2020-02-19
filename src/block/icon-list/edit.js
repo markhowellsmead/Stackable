@@ -8,6 +8,7 @@ import {
 	withSetAttributeHook,
 	withTabbedInspector,
 	withUniqueClass,
+	withClickOpenInspector,
 } from '~stackable/higher-order'
 import {
 	AdvancedRangeControl,
@@ -17,6 +18,8 @@ import {
 	PanelSpacingBody,
 	ResponsiveControl,
 	TypographyControlHelper,
+	PanelAdvancedSettings,
+	AdvancedToolbarControl,
 } from '~stackable/components'
 
 /**
@@ -24,7 +27,6 @@ import {
  */
 import {
 	getIconShapeToolbarList,
-	getIconSVG,
 	getIconToolbarList,
 } from './util'
 import createStyles from './style'
@@ -34,7 +36,7 @@ import createStyles from './style'
  */
 import { addFilter, applyFilters } from '@wordpress/hooks'
 import {
-	BaseControl, PanelBody, ToggleControl, Toolbar,
+	PanelBody, ToggleControl,
 } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import { compose } from '@wordpress/compose'
@@ -79,6 +81,7 @@ addFilter( 'stackable.icon-list.edit.inspector.style.before', 'stackable/icon-li
 						label={ __( 'Display as a grid (left to right & evenly spaced)', i18n ) }
 						checked={ displayAsGrid }
 						onChange={ displayAsGrid => setAttributes( { displayAsGrid } ) }
+						className="ugb--help-tip-icon-list-grid"
 					/>
 				) }
 				<ContentAlignControl
@@ -88,30 +91,20 @@ addFilter( 'stackable.icon-list.edit.inspector.style.before', 'stackable/icon-li
 			</PanelBody>
 
 			<PanelBody title={ __( 'Icon', i18n ) } initialOpen={ false }>
-				<BaseControl
+				<AdvancedToolbarControl
 					label={ __( 'Icon', i18n ) }
-					id="ugb-icon-control"
-				>
-					<Toolbar
-						icon={ getIconSVG( icon ) }
-						controls={ getIconToolbarList( {
-							onChange: icon => () => setAttributes( { icon } ),
-							isActive: value => icon === value,
-						} ) }
-					/>
-				</BaseControl>
-				<BaseControl
+					controls={ getIconToolbarList() }
+					value={ icon }
+					onChange={ icon => setAttributes( { icon } ) }
+					fullwidth={ false }
+				/>
+				<AdvancedToolbarControl
 					label={ __( 'Icon Shape', i18n ) }
-					id="ugb-icon-shape-control"
-				>
-					<Toolbar
-						icon={ getIconSVG( icon, iconShape ) }
-						controls={ getIconShapeToolbarList( icon, {
-							onChange: iconShape => () => setAttributes( { iconShape } ),
-							isActive: value => iconShape === value,
-						} ) }
-					/>
-				</BaseControl>
+					controls={ getIconShapeToolbarList( icon ) }
+					value={ iconShape }
+					onChange={ iconShape => setAttributes( { iconShape } ) }
+					fullwidth={ false }
+				/>
 				<ColorPaletteControl
 					label={ __( 'Icon Color', i18n ) }
 					value={ iconColor }
@@ -128,7 +121,11 @@ addFilter( 'stackable.icon-list.edit.inspector.style.before', 'stackable/icon-li
 				/>
 			</PanelBody>
 
-			<PanelBody title={ __( 'List Text', i18n ) } initialOpen={ false }>
+			<PanelAdvancedSettings
+				title={ __( 'List Text', i18n ) }
+				id="text"
+				initialOpen={ false }
+			>
 				<TypographyControlHelper
 					attrNameTemplate="listText%s"
 					setAttributes={ setAttributes }
@@ -139,7 +136,7 @@ addFilter( 'stackable.icon-list.edit.inspector.style.before', 'stackable/icon-li
 					onChange={ listTextColor => setAttributes( { listTextColor } ) }
 					label={ __( 'Color', i18n ) }
 				/>
-			</PanelBody>
+			</PanelAdvancedSettings>
 
 			<PanelSpacingBody initialOpen={ false } blockProps={ props }>
 				<AdvancedRangeControl
@@ -150,6 +147,7 @@ addFilter( 'stackable.icon-list.edit.inspector.style.before', 'stackable/icon-li
 					max={ 30 }
 					allowReset={ true }
 					placeholder="16"
+					className="ugb--help-tip-icon-list-gap"
 				/>
 			</PanelSpacingBody>
 		</Fragment>
@@ -200,4 +198,7 @@ export default compose(
 	withTabbedInspector(),
 	withContentAlignReseter(),
 	withBlockStyles( createStyles, { editorMode: true } ),
+	withClickOpenInspector( [
+		[ 'ul, ul li', 'text' ],
+	] ),
 )( edit )

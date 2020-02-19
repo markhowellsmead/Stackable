@@ -46,18 +46,17 @@ import {
 	withTabbedInspector,
 	withContentAlignReseter,
 	withBlockStyles,
+	withClickOpenInspector,
 } from '~stackable/higher-order'
 
 /**
  * WordPress dependencies
  */
 import {
-	PanelBody, RangeControl,
-} from '@wordpress/components'
-import {
 	__, _x, sprintf,
 } from '@wordpress/i18n'
 import { addFilter, applyFilters } from '@wordpress/hooks'
+import { PanelBody } from '@wordpress/components'
 import { Fragment } from '@wordpress/element'
 import { compose } from '@wordpress/compose'
 import { RichText } from '@wordpress/block-editor'
@@ -120,12 +119,13 @@ addFilter( 'stackable.testimonial.edit.inspector.style.before', 'stackable/testi
 		<Fragment>
 			{ output }
 			<PanelBody title={ __( 'General', i18n ) }>
-				<RangeControl
+				<AdvancedRangeControl
 					label={ __( 'Columns', i18n ) }
 					value={ columns }
 					onChange={ columns => setAttributes( { columns } ) }
 					min={ 1 }
 					max={ 3 }
+					className="ugb--help-tip-general-columns"
 				/>
 				{ show.borderRadius &&
 					<AdvancedRangeControl
@@ -136,6 +136,7 @@ addFilter( 'stackable.testimonial.edit.inspector.style.before', 'stackable/testi
 						max={ 50 }
 						allowReset={ true }
 						placeholder="12"
+						className="ugb--help-tip-general-border-radius"
 					/>
 				}
 				{ show.shadow &&
@@ -147,6 +148,7 @@ addFilter( 'stackable.testimonial.edit.inspector.style.before', 'stackable/testi
 						max={ 9 }
 						allowReset={ true }
 						placeholder={ design !== 'basic2' ? 3 : '' }
+						className="ugb--help-tip-general-shadow"
 					/>
 				}
 				<ContentAlignControl
@@ -158,20 +160,23 @@ addFilter( 'stackable.testimonial.edit.inspector.style.before', 'stackable/testi
 			{ applyFilters( 'stackable.testimonial.edit.inspector.style.general.after', null, props ) }
 
 			{ show.columnBackground &&
-				<PanelBody
+				<PanelAdvancedSettings
 					title={ __( 'Column Background', i18n ) }
+					id="column-background"
 					initialOpen={ false }
+					className="ugb--help-tip-column-background-on-off"
 				>
 					<BackgroundControlsHelper
 						attrNameTemplate="column%s"
 						setAttributes={ setAttributes }
 						blockAttributes={ props.attributes }
 					/>
-				</PanelBody>
+				</PanelAdvancedSettings>
 			}
 
 			<PanelAdvancedSettings
 				title={ __( 'Testimonial', i18n ) }
+				id="testimonial"
 				checked={ showTestimonial }
 				onChange={ showTestimonial => setAttributes( { showTestimonial } ) }
 				toggleOnSetAttributes={ [
@@ -196,7 +201,10 @@ addFilter( 'stackable.testimonial.edit.inspector.style.before', 'stackable/testi
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-description"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
@@ -244,13 +252,17 @@ addFilter( 'stackable.testimonial.edit.inspector.style.before', 'stackable/testi
 						setAttributes={ setAttributes }
 						blockAttributes={ props.attributes }
 					>
-						<AlignButtonsControl label={ __( 'Align', i18n ) } />
+						<AlignButtonsControl
+							label={ __( 'Align', i18n ) }
+							className="ugb--help-tip-alignment-image"
+						/>
 					</ResponsiveControl>
 				</PanelAdvancedSettings>
 			}
 
 			<PanelAdvancedSettings
 				title={ __( 'Name', i18n ) }
+				id="name"
 				checked={ showName }
 				onChange={ showName => setAttributes( { showName } ) }
 				toggleOnSetAttributes={ [
@@ -281,12 +293,16 @@ addFilter( 'stackable.testimonial.edit.inspector.style.before', 'stackable/testi
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-name"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Position', i18n ) }
+				id="position"
 				checked={ showPosition }
 				onChange={ showPosition => setAttributes( { showPosition } ) }
 				toggleOnSetAttributes={ [
@@ -311,7 +327,10 @@ addFilter( 'stackable.testimonial.edit.inspector.style.before', 'stackable/testi
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-name"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
@@ -327,6 +346,7 @@ addFilter( 'stackable.testimonial.edit.inspector.style.before', 'stackable/testi
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-description"
 						/>
 					</ResponsiveControl>
 				}
@@ -341,6 +361,7 @@ addFilter( 'stackable.testimonial.edit.inspector.style.before', 'stackable/testi
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-image"
 						/>
 					</ResponsiveControl>
 				}
@@ -355,6 +376,7 @@ addFilter( 'stackable.testimonial.edit.inspector.style.before', 'stackable/testi
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-name"
 						/>
 					</ResponsiveControl>
 				) }
@@ -369,6 +391,7 @@ addFilter( 'stackable.testimonial.edit.inspector.style.before', 'stackable/testi
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-name"
 						/>
 					</ResponsiveControl>
 				) }
@@ -554,6 +577,12 @@ export default compose(
 	withTabbedInspector(),
 	withContentAlignReseter( [ 'Testimonial%sAlign', 'Image%sAlign', 'Name%sAlign', 'Position%sAlign' ] ),
 	withBlockStyles( createStyles, { editorMode: true } ),
+	withClickOpenInspector( [
+		[ '.ugb-testimonial__item', 'column-background' ],
+		[ '.ugb-testimonial__body', 'testimonial' ],
+		[ '.ugb-testimonial__name', 'name' ],
+		[ '.ugb-testimonial__position', 'position' ],
+	] ),
 	withSelect( ( select, props ) => {
 		// Once the editor is loaded, cache the other sizes of the image.
 		cacheImageData( props.attributes.image1Id, select )

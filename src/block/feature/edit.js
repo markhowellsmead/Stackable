@@ -39,6 +39,7 @@ import {
 	withTabbedInspector,
 	withContentAlignReseter,
 	withBlockStyles,
+	withClickOpenInspector,
 } from '~stackable/higher-order'
 import classnames from 'classnames'
 
@@ -119,6 +120,7 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 						attrNameTemplate="imageColumn%sWidth"
 						setAttributes={ setAttributes }
 						blockAttributes={ props.attributes }
+						screens={ [ 'desktop', 'tablet' ] }
 					>
 						<AdvancedRangeControl
 							label={ __( 'Image Column Width', i18n ) }
@@ -126,6 +128,7 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 							max={ 100 }
 							allowReset={ true }
 							placeholder="50"
+							className="ugb--help-tip-image-column-width"
 						/>
 					</ResponsiveControl>
 				}
@@ -140,6 +143,7 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 							min={ 300 }
 							max={ 1000 }
 							allowReset={ true }
+							className="ugb--help-tip-feature-container-width"
 						/>
 					</ResponsiveControl>
 				}
@@ -154,6 +158,7 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 							min={ 0 }
 							max={ 300 }
 							allowReset={ true }
+							className="ugb--help-tip-feature-container-offset"
 						/>
 					</ResponsiveControl>
 				}
@@ -173,6 +178,7 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 						max={ 50 }
 						allowReset={ true }
 						placeholder="12"
+						className="ugb--help-tip-general-border-radius"
 					/>
 				}
 				{ show.columnBackground &&
@@ -184,6 +190,7 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 						max={ 9 }
 						allowReset={ true }
 						placeholder="3"
+						className="ugb--help-tip-general-shadow"
 					/>
 				}
 				<ContentAlignControl
@@ -193,16 +200,18 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 			</PanelBody>
 
 			{ show.columnBackground &&
-				<PanelBody
+				<PanelAdvancedSettings
 					title={ __( 'Background', i18n ) }
+					id="column-background"
 					initialOpen={ false }
+					className="ugb--help-tip-column-background-on-off"
 				>
 					<BackgroundControlsHelper
 						attrNameTemplate="column%s"
 						setAttributes={ setAttributes }
 						blockAttributes={ props.attributes }
 					/>
-				</PanelBody>
+				</PanelAdvancedSettings>
 			}
 
 			<PanelBody
@@ -234,6 +243,7 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 								min={ 400 }
 								max={ 1000 }
 								allowReset={ true }
+								className="ugb--help-tip-image-height-crop"
 							/>
 						</ResponsiveControl>
 					</Fragment>
@@ -242,6 +252,7 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 
 			<PanelAdvancedSettings
 				title={ __( 'Title', i18n ) }
+				id="title"
 				checked={ showTitle }
 				onChange={ showTitle => setAttributes( { showTitle } ) }
 				toggleOnSetAttributes={ [
@@ -271,12 +282,16 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-title"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Description', i18n ) }
+				id="description"
 				checked={ showDescription }
 				onChange={ showDescription => setAttributes( { showDescription } ) }
 				toggleOnSetAttributes={ [
@@ -301,12 +316,16 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				>
-					<AlignButtonsControl label={ __( 'Align', i18n ) } />
+					<AlignButtonsControl
+						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-description"
+					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
 
 			<PanelAdvancedSettings
 				title={ __( 'Button', i18n ) }
+				id="button"
 				checked={ showButton }
 				onChange={ showButton => setAttributes( { showButton } ) }
 				toggleOnSetAttributes={ [
@@ -328,6 +347,7 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 				>
 					<AlignButtonsControl
 						label={ __( 'Align', i18n ) }
+						className="ugb--help-tip-alignment-button"
 					/>
 				</ResponsiveControl>
 			</PanelAdvancedSettings>
@@ -344,6 +364,7 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-title"
 						/>
 					</ResponsiveControl>
 				}
@@ -358,6 +379,7 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-description"
 						/>
 					</ResponsiveControl>
 				}
@@ -372,6 +394,7 @@ addFilter( 'stackable.feature.edit.inspector.style.before', 'stackable/feature',
 							min={ -50 }
 							max={ 100 }
 							allowReset={ true }
+							className="ugb--help-tip-spacing-button"
 						/>
 					</ResponsiveControl>
 				}
@@ -563,6 +586,12 @@ export default compose(
 	withTabbedInspector(),
 	withContentAlignReseter( [ 'Title%sAlign', 'Description%sAlign', 'Button%sAlign' ] ),
 	withBlockStyles( createStyles, { editorMode: true } ),
+	withClickOpenInspector( [
+		[ '.ugb-feature__item', 'column-background' ],
+		[ '.ugb-feature__title', 'title' ],
+		[ '.ugb-feature__description', 'description' ],
+		[ '.ugb-button', 'button' ],
+	] ),
 	withSelect( ( select, props ) => {
 		// Once the editor is loaded, cache the other sizes of the image.
 		cacheImageData( props.attributes.imageId, select )

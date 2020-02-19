@@ -11,6 +11,7 @@ import {
 	ResponsiveControl,
 	WhenResponsiveScreen,
 	DivBackground,
+	PanelAdvancedSettings,
 } from '~stackable/components'
 import {
 	getVideoProviderFromURL,
@@ -29,6 +30,7 @@ import {
 	withSetAttributeHook,
 	withTabbedInspector,
 	withUniqueClass,
+	withClickOpenInspector,
 } from '~stackable/higher-order'
 import createStyles from './style'
 
@@ -100,7 +102,10 @@ addFilter( 'stackable.video-popup.edit.inspector.style.before', 'stackable/video
 				/>
 			</PanelBody>
 
-			<PanelBody title={ __( 'Container', i18n ) } initialOpen={ false }>
+			<PanelAdvancedSettings
+				title={ __( 'Container', i18n ) }
+				initialOpen={ false }
+			>
 				{ show.containerWidth &&
 					<Fragment>
 						<WhenResponsiveScreen screen="desktop">
@@ -111,6 +116,7 @@ addFilter( 'stackable.video-popup.edit.inspector.style.before', 'stackable/video
 								max="2000"
 								allowReset={ true }
 								onChange={ width => props.setAttributes( { width } ) }
+								className="ugb--help-tip-video-popup-width"
 							/>
 						</WhenResponsiveScreen>
 						<WhenResponsiveScreen screen="tablet">
@@ -121,6 +127,7 @@ addFilter( 'stackable.video-popup.edit.inspector.style.before', 'stackable/video
 								max="1000"
 								allowReset={ true }
 								onChange={ tabletWidth => props.setAttributes( { tabletWidth } ) }
+								className="ugb--help-tip-video-popup-width"
 							/>
 						</WhenResponsiveScreen>
 						<WhenResponsiveScreen screen="mobile">
@@ -131,6 +138,7 @@ addFilter( 'stackable.video-popup.edit.inspector.style.before', 'stackable/video
 								max="700"
 								allowReset={ true }
 								onChange={ mobileWidth => props.setAttributes( { mobileWidth } ) }
+								className="ugb--help-tip-video-popup-width"
 							/>
 						</WhenResponsiveScreen>
 					</Fragment>
@@ -146,6 +154,7 @@ addFilter( 'stackable.video-popup.edit.inspector.style.before', 'stackable/video
 						max={ 1000 }
 						allowReset={ true }
 						placeholder="400"
+						className="ugb--help-tip-video-popup-height"
 					/>
 				</ResponsiveControl>
 				{ show.borderRadius &&
@@ -157,6 +166,7 @@ addFilter( 'stackable.video-popup.edit.inspector.style.before', 'stackable/video
 						max={ 50 }
 						allowReset={ true }
 						placeholder="12"
+						className="ugb--help-tip-general-border-radius"
 					/>
 				}
 				<AdvancedRangeControl
@@ -167,18 +177,27 @@ addFilter( 'stackable.video-popup.edit.inspector.style.before', 'stackable/video
 					max={ 9 }
 					allowReset={ true }
 					placeholder="3"
+					className="ugb--help-tip-general-shadow"
 				/>
-			</PanelBody>
+			</PanelAdvancedSettings>
 
-			<PanelBody title={ __( 'Background', i18n ) } initialOpen={ false }>
+			<PanelAdvancedSettings
+				title={ __( 'Background', i18n ) }
+				id="background"
+				initialOpen={ false }
+			>
 				<BackgroundControlsHelper
 					attrNameTemplate="preview%s"
 					setAttributes={ setAttributes }
 					blockAttributes={ props.attributes }
 				/>
-			</PanelBody>
+			</PanelAdvancedSettings>
 
-			<PanelBody title={ __( 'Play Button', i18n ) } initialOpen={ false }>
+			<PanelAdvancedSettings
+				title={ __( 'Play Button', i18n ) }
+				id="play-button"
+				initialOpen={ false }
+			>
 				<SelectControl
 					label={ __( 'Button Style', i18n ) }
 					value={ playButtonType }
@@ -218,7 +237,7 @@ addFilter( 'stackable.video-popup.edit.inspector.style.before', 'stackable/video
 					allowReset={ true }
 					placeholder="1.0"
 				/>
-			</PanelBody>
+			</PanelAdvancedSettings>
 
 			{ ( showBlockTitle || showBlockDescription ) &&
 				<PanelSpacingBody initialOpen={ false } blockProps={ props }>
@@ -272,4 +291,8 @@ export default compose(
 	withGoogleFont,
 	withTabbedInspector(),
 	withBlockStyles( createStyles, { editorMode: true } ),
+	withClickOpenInspector( [
+		[ '.ugb-video-popup__wrapper', 'background' ],
+		[ '.ugb-video-popup__play-button svg', 'play-button' ],
+	] ),
 )( edit )
